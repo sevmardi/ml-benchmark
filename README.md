@@ -1,2 +1,2 @@
-# vowpal-wabbit-experiments
-Experiments using Vowpal Wabbit
+# distributed machine learning benchmark
+Experiments using Apache Spark
