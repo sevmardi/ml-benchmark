@@ -1,1 +1,1 @@
-./spark-submit ClickRate.py
+spark-submit predict_click_rate.py
