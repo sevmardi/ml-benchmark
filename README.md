@@ -1,2 +1,10 @@
-# distributed machine learning benchmark
+# Distributed Machine Learning Benchmark
 Experiments using Apache Spark
+
+
+## Requirements
+Coming soon! 
+
+
+## Copyright
+See [LICENSE](LICENSE) for details.
