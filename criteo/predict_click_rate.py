@@ -4,7 +4,7 @@ from pyspark.mllib.regression import LabeledPoint
 from pyspark.mllib.classification import LogisticRegressionWithSGD, NaiveBayes, NaiveBayesModel,SVMWithSGD, SVMModel
 from pyspark.sql import SQLContext
 import numpy as np
-from math
+import math
 from operator import add
 import sys
 import os
