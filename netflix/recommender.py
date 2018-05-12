@@ -5,6 +5,8 @@ from pyspark.mllib.recommendation import ALS
 from pyspark import SparkContext, SparkConf
 
 
+# calculates average rating from movieid/rating tuple
+# ret: movieid[nr/rating, avg/rating]
 def get_counts_and_averages(movidid_rating):
     nr_rating = len(movidid_rating[1])
     return movidid_rating[0], (nr_rating, float(sum(x for x in movidid_rating[1])) / nr_rating)
@@ -43,7 +45,7 @@ class NetflixRecommender:
         return pre_model.join(self.movies_wtitle).join(self.movie_rating_count).map(lambda r: (r[1][0][1], r[1][0][0], r[1][1]))
 
     def __init__(self, sc):
-        dataset = or.path.join('.', 'dataset')
+        dataset = or.path.join('.', '/data/vw/netflix/download/')
         self.sc = sc
         print("\n\n ** loading ratings... **\n\n")
 
@@ -69,7 +71,7 @@ class NetflixRecommender:
 
         user_id = 6
         number_recommendations = 15
-
+        #the number of ratings a movie must have before it's concidered...
         rating_threshold = 15
         predicted = self.predict_n_ratings(
             user_id, number_recommendations, rating_threshold)
