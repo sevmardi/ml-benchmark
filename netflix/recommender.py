@@ -1,8 +1,7 @@
-import time
-import sys
-import os
+import time, sys, os
 from pyspark.mllib.recommendation import ALS
-from pyspark import SparkContext, SparkConf
+from pyspark.conf import SparkContext, SparkConf
+
 
 
 # calculates average rating from movieid/rating tuple
@@ -45,7 +44,8 @@ class NetflixRecommender:
         return pre_model.join(self.movies_wtitle).join(self.movie_rating_count).map(lambda r: (r[1][0][1], r[1][0][0], r[1][1]))
 
     def __init__(self, sc):
-        dataset = or.path.join('.', '/data/vw/netflix/download/')
+        
+        dataset = os.path.join('.', '~/Documents/netflix/download')
         self.sc = sc
         print("\n\n ** loading ratings... **\n\n")
 
