@@ -1,5 +1,5 @@
 # Distributed Machine Learning Benchmark
-Experiments using Apache Spark
+Experiments using primarily Apache Spark
 
 
 ## Requirements

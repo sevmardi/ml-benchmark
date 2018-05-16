@@ -1,6 +1,6 @@
 import time, sys, os
 from pyspark.mllib.recommendation import ALS
-from pyspark.conf import SparkContext, SparkConf
+from pyspark import SparkContext, SparkConf
 
 
 
@@ -47,17 +47,13 @@ class NetflixRecommender:
         
         dataset = os.path.join('.', '~/Documents/netflix/download')
         self.sc = sc
+
         print("\n\n ** loading ratings... **\n\n")
-
-        self.ratings = self.sc.textFile(os.path.join(dataset, 'nf_10000')).map(lambda line: line.split(
-            ",")).map(lambda tokens: (int(tokens[0]), int(tokens[1]), float(tokens[2]))).cache()
+        self.ratings = self.sc.textFile(os.path.join(dataset, 'nf_10000')).map(lambda line: line.split(",")).map(lambda tokens: (int(tokens[0]), int(tokens[1]), float(tokens[2]))).cache()
+        
         print("\n\n ** loading movie data **\n\n")
-
-        self.movies = self.sc.textFile(os.path.join(dataset, 'movie_titles')).map(
-            lambda line: line.split(",")).map(lambda tokens: (int(tokens[0]), tokens[1], tokens[2])).cache()
-
-        self.movie_wtitle = self.movies.map(
-            lambda x: (int(x[0]), x[2])).cache()
+        self.movies = self.sc.textFile(os.path.join(dataset, 'movie_titles')).map(lambda line: line.split(",")).map(lambda tokens: (int(tokens[0]), tokens[1], tokens[2])).cache()
+        self.movie_wtitle = self.movies.map(lambda x: (int(x[0]), x[2])).cache()
 
         print("\n\n ** loading complete ** \n\n")
 
