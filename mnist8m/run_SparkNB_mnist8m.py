@@ -1,16 +1,16 @@
 from __future__ import division
 from os.path import join 
-
 from pyspark import SparkConf, SparkContext
 from pyspark.mllib.classification import NaiveBayes
 from pyspark.mllib.linalg import SparseVector
 from pyspark.mllib.regression import LabeledPoint
 
+# https://github.com/ntienvu/ICDM2016_OLR/blob/be92ab5f14f122ba0934cff4a28863796a6c3413/large_scale/run_SparkNB_mnist8m.py
 MODEL_NAME = "SparkNB_mnist8m"
 D = 784
 K = 10
 
-DATA_DIR = "data/mnist8m"
+DATA_DIR = "data/mnist-8m/mnist8m"
 DATA_FILE_TRAIN = "mnist8m.scale"
 DATA_FILE_TEST = "mnist.scale.t"
 MODEL_DIR = "stored_model"
