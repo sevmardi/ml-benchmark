@@ -102,4 +102,6 @@ ENV/
 
 # mine 
 *.csv
-*.mp4
+*.xml
+*.iml
+
