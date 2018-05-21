@@ -140,10 +140,14 @@ def model_with_logistic_regression(trainingData, validationData):
 
 def main():
     sys.argv[1]  # Takes in the training data file as the input.
-    outputPath = sys.argv[2]
-    NBPath = sys.argv[3]
-    SVMPath = sys.argv[4]
-    LRPath = sys.argv[5]
+    # outputPath = sys.argv[2]
+    outputPath = '/data/vw/criteo-display-advertising-dataset/'
+    # NBPath = sys.argv[3]
+    NBPath = '/data/vw/criteo-display-advertising-dataset/'
+    # SVMPath = sys.argv[4]
+    SVMPath = '/data/vw/criteo-display-advertising-dataset/'
+    # LRPath = sys.argv[5]
+    LRPath = '/data/vw/criteo-display-advertising-dataset/'
 
     conf = SparkConf().setAppName('Click Prediction')
     conf.set("spark.storage.memoryFraction", "0.40")
