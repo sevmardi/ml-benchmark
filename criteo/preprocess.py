@@ -15,7 +15,7 @@ for key in range(15,40):
 
 #take the train set as argu 
 fname = sys.argv[1]
-output = sys.argv[2]
+output = sys.argv[2] #the output file e.g. output.svm
 
 
 num_terms = sum(col_map.values()) + 14 + 1
@@ -49,4 +49,4 @@ with open(fname, "r") as f:
             pbar.update(1)
 pbar.close()
 
-print(max_vals)
+print("Done!")
