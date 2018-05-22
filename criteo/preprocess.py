@@ -15,13 +15,14 @@ for key in range(15,40):
 
 #take the train set as argu 
 fname = sys.argv[1]
+output = sys.argv[2]
 
 
 num_terms = sum(col_map.values()) + 14 + 1
 num_lines = sum(1 for line in open(fname))
 pbar = tqdm(total = num_lines)
 with open(fname, "r") as f:
-    with open("out.svm", "w") as out:
+    with open(output, "w") as out:
         line = f.readline()
         while line:
             lst = line.split("\t")
