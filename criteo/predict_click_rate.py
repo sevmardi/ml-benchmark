@@ -154,15 +154,16 @@ def main():
     sc = SparkContext(conf=conf)
     sqlContext = SQLContext(sc)
 
-    # Read the text file and preprocess the data after creating the RDD##Remove the new line character from the end and replace the tabs with ','
+    # Read the text file and preprocess the data after creating the RDD
+    # Remove the new line character from the end and replace the tabs with ','
     # as the columns are tab separated in the file.
     adsRDD = sc.textFile(input).map(lambda x : unicode(x.replace('\n', '').replace('\t', ','))).cache()
     ##totalads = adsRDD.count()
+    
     # Split the ad data into training set, validation set, and test set.
     # As the data instances are big enough we don't need to perform cross
     # validation. So we can simply split the data into 70-15-15 proportions.
-    trainingSet, validationSet, testSet = adsRDD.randomSplit(
-        [.7, .15, .15], 25)
+    trainingSet, validationSet, testSet = adsRDD.randomSplit([.7, .15, .15], 25)
 
     # ##Let's cache the above 3 RDDs as we will be using them during the models traning.
     # ##I already lost marks in the assignment for this reason. Don't wanna repeat it.
@@ -173,6 +174,7 @@ def main():
     # Parse the feature of each ad and turn them into the form [featureId,
     # (features)]
     trainingSetFeatures = trainingSet.map(featureParser)
+    
     # Create one hot encoding dictionary for the features of the ad.
     oneHotDictForTheAd = generateOHD(trainingSetFeatures)
     # print '****************** OHD*************' +
