@@ -1,7 +1,7 @@
 # Distributed Machine Learning Benchmark
 Experiments using primarily Apache Spark
 
- ![ML-Benchmark](img/ml-benchmark.png)
+ ![ML-Benchmark](images/ml-benchmark.png)
 
 
 ## Requirements
