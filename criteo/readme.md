@@ -28,9 +28,22 @@ The semantic of these features is undisclosed. Some features may have missing va
 
 The rows are chronologically ordered.
 
+## Feature Selection
+Soon! 
+
+
+## Usage
+```
+sbt package
+./run.sh 
+
+```
+
 ## Process
 
 1) Sample is first parsed and loaded in context.
 2) Transformed so it can be used in support vector machines, logistic regression, and naive bayes
 3) Model created from the training data after making a 70-15-15 split for the training, validation, and testing set, respectively.
 5) Iterations are performed on each three algorithms to generate the model with best parameters.
+
+
