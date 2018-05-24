@@ -9,7 +9,7 @@ from operator import add
 
 
 print "--------------------create context------------"
-dacsample = "/data/vw/criteo-display-advertising-dataset/train.txt"  # Should be some file on your system
+dacsample = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"  # Should be some file on your system
 sc = SparkContext("local[4]", "ClickRatePrediction") ##run on local with 4 cores, named it "ClickRatePrediction"
 print "-------------------/create context------------"
 
