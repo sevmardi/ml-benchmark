@@ -181,15 +181,13 @@ def main():
     numberOfFeatures = len(oneHotDictForTheAd.keys())
 
     # Generate labelled Sparse vector for the training and validation set
-    # This will be used as an input to our Machine Learning Classification
-    # Algorithms
+    # This will be used as an input to our Machine Learning Classification Algorithms
 
     readyTrainingData = trainingSet.map(lambda ad: createLabeledSparseVector(ad, oneHotDictForTheAd, numberOfFeatures))
     readyValidationData = validationSet.map(lambda ad: createLabeledSparseVector(ad, oneHotDictForTheAd, numberOfFeatures))
     readyTestData = testSet.map(lambda ad: createLabeledSparseVector(ad, oneHotDictForTheAd, numberOfFeatures))
 
-    # Train the model using Logistic Regression, Naive Bayes, and Support
-    # Vector Machines
+    # Train the model using Logistic Regression, Naive Bayes, and Support Vector Machines
     LRModel, visualizationDataForLR = model_with_logistic_regression(readyTrainingData, readyValidationData)
     LRpredictionOnTestData = readyTestData.map(  lambda ad: (ad.label, LRModel.predict(ad.features)))
     LRAccuracy = calculateTestAccuracy( LRpredictionOnTestData, LRpredictionOnTestData.count())
