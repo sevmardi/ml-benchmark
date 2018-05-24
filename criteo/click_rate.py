@@ -15,9 +15,10 @@ sc = SparkContext("local[4]", "ClickRatePrediction") ##run on local with 4 cores
 print "-------------------Finished creating context..------------"
 print "--------------------Creating parse text file-----------"
 # input_file = open(input_file)
-adsRdd = sc.textFile(input_file).map(lambda x: unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file).cache()
+# adsRdd = sc.textFile(input_file).map(lambda x: unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file).cache()
+dacData = sc.textFile(input_file).map([unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file])
 # dacData = [unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file]
-print "-------------------parse text was created!-----------"
+print "-------------------Parse text was created!-----------"
 
 print "-------------------Creating RDD!! ------------------------"
 rawData  = (sc
