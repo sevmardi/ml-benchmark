@@ -137,7 +137,8 @@ def model_with_logistic_regression(trainingData, validationData):
 
 
 def main():
-    sys.argv[1]  # Takes in the training data file as the input.
+    input_file = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"
+    # sys.argv[1]  # Takes in the training data file as the input.
     # outputPath = sys.argv[2]
     outputPath = '/data/vw/criteo-display-advertising-dataset/'
     # NBPath = sys.argv[3]
@@ -156,7 +157,8 @@ def main():
     # Remove the new line character from the end and replace the tabs with ','
     # as the columns are tab separated in the file.
     # adsRDD = sc.textFile(input).map(lambda x : unicode(x.replace('\n', '').replace('\t', ','))).cache()
-    adsRDD = sc.textFile(input).map(lambda x : unicode(x.replace('\n', '').replace('\t', ',')))
+    # adsRDD = sc.textFile(input_file).map(lambda x : unicode(x.replace('\n', '').replace('\t', ',')))
+    adsRDD = sc.textFile(input_file).map(lambda x: unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file)
     ##totalads = adsRDD.count()
     
     # Split the ad data into training set, validation set, and test set.
