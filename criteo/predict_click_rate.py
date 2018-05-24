@@ -155,7 +155,8 @@ def main():
     # Read the text file and preprocess the data after creating the RDD
     # Remove the new line character from the end and replace the tabs with ','
     # as the columns are tab separated in the file.
-    adsRDD = sc.textFile(input).map(lambda x : unicode(x.replace('\n', '').replace('\t', ','))).cache()
+    # adsRDD = sc.textFile(input).map(lambda x : unicode(x.replace('\n', '').replace('\t', ','))).cache()
+    adsRDD = sc.textFile(input).map(lambda x : unicode(x.replace('\n', '').replace('\t', ',')))
     ##totalads = adsRDD.count()
     
     # Split the ad data into training set, validation set, and test set.
