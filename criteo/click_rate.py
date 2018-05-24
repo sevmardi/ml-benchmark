@@ -6,19 +6,20 @@ import numpy as np
 from math import log
 from math import exp #  exp(-t) = e^-t
 from operator import add
+import sys
 
-
-print "--------------------create context------------"
-dacsample = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"  # Should be some file on your system
+print "--------------------creating context.. ------------"
+# input_file = sys.argv[1]
+input_file = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"  # Should be some file on your system
 sc = SparkContext("local[4]", "ClickRatePrediction") ##run on local with 4 cores, named it "ClickRatePrediction"
-print "-------------------/create context------------"
+print "-------------------Finished creating context..------------"
+print "--------------------Creating parse text file-----------"
+# input_file = open(input_file)
+adsRdd = sc.textFile(input_file).map(lambda x: unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file).cache()
+# dacData = [unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file]
+print "-------------------parse text was created!-----------"
 
-print "--------------------parse text file-----------"
-dacsample = open(dacsample)
-dacData = [unicode(x.replace('\n', '').replace('\t', ',')) for x in dacsample]
-print "-------------------/parse text file-----------"
-
-print "-------------------RDD------------------------"
+print "-------------------Creating RDD!! ------------------------"
 rawData  = (sc
             .parallelize(dacData, 4)  # Create an RDD
             .zipWithIndex()  # Enumerate lines
