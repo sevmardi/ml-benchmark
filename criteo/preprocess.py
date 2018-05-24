@@ -13,7 +13,7 @@ for key in range(15,40):
 	offset[key] = col_map[key-1]+prev
 	prev=  offset[key]
 
-#take the train set as argu 
+#take the train set as CLI argument 
 fname = sys.argv[1]
 output = sys.argv[2] #the output file e.g. output.svm
 

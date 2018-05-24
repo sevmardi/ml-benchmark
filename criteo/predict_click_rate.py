@@ -10,11 +10,11 @@ import sys
 import os
 
 
-def generate_hdd(feature_set):
+def generateOHD(feature_set):
     return feature_set.flatMap(lambda x: x).distinct().zipWithIndex().collectAsMap()
 
 
-def feature_parser(adRow):
+def featureParser(adRow):
     # Remove the label column first.
     splittedColumns = adRow.split(',')
     listOfFeatureTuples = splittedColumns[1:]
@@ -37,7 +37,7 @@ def create_sparse_vector_of_features(features, oneHotDict, numberOfFeatures):
     return sparseVector
 
 
-def create_labeled_sparse_vector(ad, oneHotDict, numberOfFeatures):
+def createLabeledSparseVector(ad, oneHotDict, numberOfFeatures):
     # Create LabeledPoint in the form of (label, sparse vector of features)
     features = featureParser(ad)
     sparseVector = create_sparse_vector_of_features(
@@ -46,7 +46,7 @@ def create_labeled_sparse_vector(ad, oneHotDict, numberOfFeatures):
     return LabeledPoint(ad[0], sparseVector)
 
 
-def calculate_test_accuracy(predictionOnTest, totalTestRecords):
+def calculateTestAccuracy(predictionOnTest, totalTestRecords):
     correctlyClassified = predictionOnTest.filter(
         lambda x: x[0] == x[1]).count()
     testAccuracy = float(correctlyClassified) / totalTestRecords
@@ -121,10 +121,8 @@ def model_with_logistic_regression(trainingData, validationData):
 
     for regularizer in regularizationParamater:
 
-        model = LogisticRegressionWithSGD.train(
-            trainingData, numOfIterations, 1.0, regParam=regularizer)
-        predict = validationData.map(lambda ad: (
-            ad.label, model.predict(ad.features)))
+        model = LogisticRegressionWithSGD.train( trainingData, numOfIterations, 1.0, regParam=regularizer)
+        predict = validationData.map(lambda ad: ( ad.label, model.predict(ad.features)))
         totalValidationAds = validationData.count()
         correctlyPredicted = predict.filter(lambda x: x[0] == x[1]).count()
         accuracy = float(correctlyPredicted) / totalValidationAds
@@ -186,45 +184,29 @@ def main():
     # This will be used as an input to our Machine Learning Classification
     # Algorithms
 
-    readyTrainingData = trainingSet.map(
-        lambda ad: createLabeledSparseVector(ad, oneHotDictForTheAd, numberOfFeatures))
-    readyValidationData = validationSet.map(
-        lambda ad: createLabeledSparseVector(ad, oneHotDictForTheAd, numberOfFeatures))
-    readyTestData = testSet.map(lambda ad: createLabeledSparseVector(
-        ad, oneHotDictForTheAd, numberOfFeatures))
+    readyTrainingData = trainingSet.map(lambda ad: createLabeledSparseVector(ad, oneHotDictForTheAd, numberOfFeatures))
+    readyValidationData = validationSet.map(lambda ad: createLabeledSparseVector(ad, oneHotDictForTheAd, numberOfFeatures))
+    readyTestData = testSet.map(lambda ad: createLabeledSparseVector(ad, oneHotDictForTheAd, numberOfFeatures))
 
     # Train the model using Logistic Regression, Naive Bayes, and Support
     # Vector Machines
-    LRModel, visualizationDataForLR = modelWithLogisticRegression(
-        readyTrainingData, readyValidationData)
-    LRpredictionOnTestData = readyTestData.map(
-        lambda ad: (ad.label, LRModel.predict(ad.features)))
-    LRAccuracy = calculateTestAccuracy(
-        LRpredictionOnTestData, LRpredictionOnTestData.count())
-    SVMmodel, visualizationDataForSVM = modelWithSVM(
-        readyTrainingData, readyValidationData)
-    SVMpredictionOnTestData = readyTestData.map(
-        lambda ad: (ad.label, SVMmodel.predict(ad.features)))
-    SVMAccuracy = calculateTestAccuracy(
-        SVMpredictionOnTestData, SVMpredictionOnTestData.count())
-    NBModel, visualizationDataForNaiveBayes = modelWithNaiveBayes(
-        readyTrainingData, readyValidationData)
-    NBpredictionOnTestData = readyTestData.map(
-        lambda ad: (ad.label, NBModel.predict(ad.features)))
-    NBAccuracy = calculateTestAccuracy(
-        NBpredictionOnTestData, NBpredictionOnTestData.count())
+    LRModel, visualizationDataForLR = model_with_logistic_regression(readyTrainingData, readyValidationData)
+    LRpredictionOnTestData = readyTestData.map(  lambda ad: (ad.label, LRModel.predict(ad.features)))
+    LRAccuracy = calculateTestAccuracy( LRpredictionOnTestData, LRpredictionOnTestData.count())
+    SVMmodel, visualizationDataForSVM = model_with_svm(readyTrainingData, readyValidationData)
+    SVMpredictionOnTestData = readyTestData.map(lambda ad: (ad.label, SVMmodel.predict(ad.features)))
+    SVMAccuracy = calculateTestAccuracy( SVMpredictionOnTestData, SVMpredictionOnTestData.count())
+    NBModel, visualizationDataForNaiveBayes = model_with_naive_bayes(readyTrainingData, readyValidationData)
+    NBpredictionOnTestData = readyTestData.map(lambda ad: (ad.label, NBModel.predict(ad.features)))
+    NBAccuracy = calculateTestAccuracy( NBpredictionOnTestData, NBpredictionOnTestData.count())
 
     finalAccuracies = [('Logistic Regression With SGD', LRAccuracy),
                        ('SVM With SGD', SVMAccuracy), ('Naive Bayes', NBAccuracy)]
-    finalAccuraciesDF = sqlContext.createDataFrame(
-        finalAccuracies, ['Algorithm', 'Accuracy'])
+    finalAccuraciesDF = sqlContext.createDataFrame( finalAccuracies, ['Algorithm', 'Accuracy'])
 
-    DFvisualizationDataForLR = sqlContext.createDataFrame(
-        visualizationDataForLR, ['Regularization Value', 'Validation Accuracy'])
-    DFvisualizationDataForSVM = sqlContext.createDataFrame(
-        visualizationDataForSVM, ['Regularization Value', 'Validation Accuracy'])
-    DFvisualizationDataForNaiveBayes = sqlContext.createDataFrame(
-        visualizationDataForNaiveBayes, ['Regularization Value', 'Validation Accuracy'])
+    DFvisualizationDataForLR = sqlContext.createDataFrame( visualizationDataForLR, ['Regularization Value', 'Validation Accuracy'])
+    DFvisualizationDataForSVM = sqlContext.createDataFrame( visualizationDataForSVM, ['Regularization Value', 'Validation Accuracy'])
+    DFvisualizationDataForNaiveBayes = sqlContext.createDataFrame( visualizationDataForNaiveBayes, ['Regularization Value', 'Validation Accuracy'])
     print("*************************************************************************************************************************************")
 
     print(finalAccuracies)

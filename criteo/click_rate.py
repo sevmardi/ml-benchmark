@@ -1,5 +1,3 @@
-
-
 from pyspark import SparkContext
 from pyspark.mllib.linalg import SparseVector
 from pyspark.mllib.regression import LabeledPoint
@@ -11,7 +9,7 @@ from operator import add
 
 
 print "--------------------create context------------"
-dacsample = "/home/dusan/Spark_Linear_Regression/dac_sample.txt"  # Should be some file on your system
+dacsample = "/data/vw/criteo-display-advertising-dataset/train.txt"  # Should be some file on your system
 sc = SparkContext("local[4]", "ClickRatePrediction") ##run on local with 4 cores, named it "ClickRatePrediction"
 print "-------------------/create context------------"
 
