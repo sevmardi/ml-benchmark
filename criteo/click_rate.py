@@ -1,4 +1,4 @@
-from pyspark import SparkContext
+from pyspark import SparkContext, SparkConf
 from pyspark.mllib.linalg import SparseVector
 from pyspark.mllib.regression import LabeledPoint
 from pyspark.mllib.classification import LogisticRegressionWithSGD
@@ -11,14 +11,19 @@ import sys
 print "--------------------creating context.. ------------"
 # input_file = sys.argv[1]
 input_file = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"  # Should be some file on your system
-sc = SparkContext("local[4]", "ClickRatePrediction") ##run on local with 4 cores, named it "ClickRatePrediction"
-print "-------------------Finished creating context..------------"
-print "--------------------Creating parse text file-----------"
-input_file = open(input_file)
-dacData = [unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file]
 
-# adsRdd = sc.textFile(input_file).map(lambda x: unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file).cache()
-# dacData = sc.textFile(input_file).map(lambda x: unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file)
+
+conf = SparkConf().setAppName('Click Prediction')
+conf.set("spark.storage.memoryFraction", "0.40")
+sc = SparkContext(conf=conf)
+# sc = SparkContext("local[4]", "ClickRatePrediction") ##run on local with 4 cores, named it "ClickRatePrediction"
+print "-------------------Finished creating context..------------"
+
+print "--------------------Creating parse text file-----------"
+# input_file = open(input_file)
+# dacData = [unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file]
+dacData = sc.textFile(input_file).map(lambda x: unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file).cache()
+
 
 print "-------------------Parse text was created!-----------"
 
