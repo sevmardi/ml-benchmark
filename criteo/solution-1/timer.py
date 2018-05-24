@@ -1,10 +1,13 @@
 import sys, csv, math, time
+
 from StringIO import StringIO
-from pyspark import SparkConf, SparkContext
-from pyspark.mllib.classification import LogisticRegressionWithLBFGS, LogisticRegressionModel
-from pyspark.mllib.regression import LabeledPoint
+from pyspark import SparkConf
+from pyspark import SparkContext
+from pyspark.mllib.classification import LogisticRegressionModel
+from pyspark.mllib.classification import LogisticRegressionWithLBFGS
 from pyspark.mllib.classification import LogisticRegressionWithSGD
 from pyspark.mllib.evaluation import BinaryClassificationMetrics
+from pyspark.mllib.regression import LabeledPoint
 
 
 APP_NAME = "My Spark Application"
