@@ -59,7 +59,7 @@ def convert (row):
 	return newrow
 	
 def main(sc):	
-	data = sc.textFile("input/ctc.csv")	
+	data = sc.textFile("data/scratch/vw/criteo-display-advertising-dataset/train.txt")	
 	collectedData = data.map(split).map(parse).filter(lambda line: line!=None )			
 	
 	features = collectedData.map(lambda x: x[1:])		
