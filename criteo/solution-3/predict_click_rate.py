@@ -11,8 +11,10 @@ import os
 
 
 def generateOHD(feature_set):
-    return feature_set.flatMap(lambda x: x).distinct().zipWithIndex().collectAsMap()
+    # return feature_set.flatMap(lambda x: x).distinct().zipWithIndex().collectAsMap()
+    return feature_set.flatMap(lambda x:x).distinct().zipWithIndex().collectAsMap()
 
+# (sampleDataRDD.flatMap(lambda x : x).distinct())
 
 def featureParser(adRow):
     # Remove the label column first.
