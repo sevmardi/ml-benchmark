@@ -9,7 +9,8 @@ from operator import add
 import sys
 
 # input_file = sys.argv[1]
-input_file = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"  # Should be some file on your system
+# input_file = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"  # Should be some file on your system
+input_file = "/tmp/datasets/train.txt"  # Should be some file on your system
 
 
 print ("--------------------creating context.. ------------")

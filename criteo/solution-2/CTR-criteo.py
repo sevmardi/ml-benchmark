@@ -29,9 +29,13 @@
 # #### Later in this lab, we'll use OHE dictionaries to transform data points into compact lists of features that can be used in machine learning algorithms.
 
 # In[2]:
-
+from pyspark import SparkConf
+from pyspark import SparkContext
 # Data for manual OHE
 # Note: the first data point does not include any value for the optional third feature
+conf = SparkConf().setAppName('Click Prediction')
+conf.set("spark.storage.memoryFraction", "0.40")
+sc = SparkContext(conf=conf)
 sampleOne = [(0, 'mouse'), (1, 'black')]
 sampleTwo = [(0, 'cat'), (1, 'tabby'), (2, 'mouse')]
 sampleThree =  [(0, 'bear'), (1, 'black'), (2, 'salmon')]
@@ -57,31 +61,31 @@ sampleOHEDictManual[(2, 'salmon')] = 6
 # In[4]:
 
 # TEST One-hot-encoding (1a)
-from test_helper import Test
+# from test_helper import Test
 
-Test.assertEqualsHashed(sampleOHEDictManual[(0,'bear')],
-                        'b6589fc6ab0dc82cf12099d1c2d40ab994e8410c',
-                        "incorrect value for sampleOHEDictManual[(0,'bear')]")
-Test.assertEqualsHashed(sampleOHEDictManual[(0,'cat')],
-                        '356a192b7913b04c54574d18c28d46e6395428ab',
-                        "incorrect value for sampleOHEDictManual[(0,'cat')]")
-Test.assertEqualsHashed(sampleOHEDictManual[(0,'mouse')],
-                        'da4b9237bacccdf19c0760cab7aec4a8359010b0',
-                        "incorrect value for sampleOHEDictManual[(0,'mouse')]")
-Test.assertEqualsHashed(sampleOHEDictManual[(1,'black')],
-                        '77de68daecd823babbb58edb1c8e14d7106e83bb',
-                        "incorrect value for sampleOHEDictManual[(1,'black')]")
-Test.assertEqualsHashed(sampleOHEDictManual[(1,'tabby')],
-                        '1b6453892473a467d07372d45eb05abc2031647a',
-                        "incorrect value for sampleOHEDictManual[(1,'tabby')]")
-Test.assertEqualsHashed(sampleOHEDictManual[(2,'mouse')],
-                        'ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4',
-                        "incorrect value for sampleOHEDictManual[(2,'mouse')]")
-Test.assertEqualsHashed(sampleOHEDictManual[(2,'salmon')],
-                        'c1dfd96eea8cc2b62785275bca38ac261256e278',
-                        "incorrect value for sampleOHEDictManual[(2,'salmon')]")
-Test.assertEquals(len(sampleOHEDictManual.keys()), 7,
-                  'incorrect number of keys in sampleOHEDictManual')
+# Test.assertEqualsHashed(sampleOHEDictManual[(0,'bear')],
+#                         'b6589fc6ab0dc82cf12099d1c2d40ab994e8410c',
+#                         "incorrect value for sampleOHEDictManual[(0,'bear')]")
+# Test.assertEqualsHashed(sampleOHEDictManual[(0,'cat')],
+#                         '356a192b7913b04c54574d18c28d46e6395428ab',
+#                         "incorrect value for sampleOHEDictManual[(0,'cat')]")
+# Test.assertEqualsHashed(sampleOHEDictManual[(0,'mouse')],
+#                         'da4b9237bacccdf19c0760cab7aec4a8359010b0',
+#                         "incorrect value for sampleOHEDictManual[(0,'mouse')]")
+# Test.assertEqualsHashed(sampleOHEDictManual[(1,'black')],
+#                         '77de68daecd823babbb58edb1c8e14d7106e83bb',
+#                         "incorrect value for sampleOHEDictManual[(1,'black')]")
+# Test.assertEqualsHashed(sampleOHEDictManual[(1,'tabby')],
+#                         '1b6453892473a467d07372d45eb05abc2031647a',
+#                         "incorrect value for sampleOHEDictManual[(1,'tabby')]")
+# Test.assertEqualsHashed(sampleOHEDictManual[(2,'mouse')],
+#                         'ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4',
+#                         "incorrect value for sampleOHEDictManual[(2,'mouse')]")
+# Test.assertEqualsHashed(sampleOHEDictManual[(2,'salmon')],
+#                         'c1dfd96eea8cc2b62785275bca38ac261256e278',
+#                         "incorrect value for sampleOHEDictManual[(2,'salmon')]")
+# Test.assertEquals(len(sampleOHEDictManual.keys()), 7,
+#                   'incorrect number of keys in sampleOHEDictManual')
 
 
 # #### ** (1b) Sparse vectors **
@@ -113,12 +117,12 @@ print bSparse.dot(w)
 # In[7]:
 
 # TEST Sparse Vectors (1b)
-Test.assertTrue(isinstance(aSparse, SparseVector), 'aSparse needs to be an instance of SparseVector')
-Test.assertTrue(isinstance(bSparse, SparseVector), 'aSparse needs to be an instance of SparseVector')
-Test.assertTrue(aDense.dot(w) == aSparse.dot(w),
-                'dot product of aDense and w should equal dot product of aSparse and w')
-Test.assertTrue(bDense.dot(w) == bSparse.dot(w),
-                'dot product of bDense and w should equal dot product of bSparse and w')
+# Test.assertTrue(isinstance(aSparse, SparseVector), 'aSparse needs to be an instance of SparseVector')
+# Test.assertTrue(isinstance(bSparse, SparseVector), 'aSparse needs to be an instance of SparseVector')
+# Test.assertTrue(aDense.dot(w) == aSparse.dot(w),
+#                 'dot product of aDense and w should equal dot product of aSparse and w')
+# Test.assertTrue(bDense.dot(w) == bSparse.dot(w),
+#                 'dot product of bDense and w should equal dot product of bSparse and w')
 
 
 # #### **(1c) OHE features as sparse vectors **
@@ -143,21 +147,21 @@ sampleThreeOHEFeatManual = SparseVector(7, {0:1.0, 3:1.0, 6:1.0})
 # In[10]:
 
 # TEST OHE Features as sparse vectors (1c)
-Test.assertTrue(isinstance(sampleOneOHEFeatManual, SparseVector),
-                'sampleOneOHEFeatManual needs to be a SparseVector')
-Test.assertTrue(isinstance(sampleTwoOHEFeatManual, SparseVector),
-                'sampleTwoOHEFeatManual needs to be a SparseVector')
-Test.assertTrue(isinstance(sampleThreeOHEFeatManual, SparseVector),
-                'sampleThreeOHEFeatManual needs to be a SparseVector')
-Test.assertEqualsHashed(sampleOneOHEFeatManual,
-                        'ecc00223d141b7bd0913d52377cee2cf5783abd6',
-                        'incorrect value for sampleOneOHEFeatManual')
-Test.assertEqualsHashed(sampleTwoOHEFeatManual,
-                        '26b023f4109e3b8ab32241938e2e9b9e9d62720a',
-                        'incorrect value for sampleTwoOHEFeatManual')
-Test.assertEqualsHashed(sampleThreeOHEFeatManual,
-                        'c04134fd603ae115395b29dcabe9d0c66fbdc8a7',
-                        'incorrect value for sampleThreeOHEFeatManual')
+# Test.assertTrue(isinstance(sampleOneOHEFeatManual, SparseVector),
+#                 'sampleOneOHEFeatManual needs to be a SparseVector')
+# Test.assertTrue(isinstance(sampleTwoOHEFeatManual, SparseVector),
+#                 'sampleTwoOHEFeatManual needs to be a SparseVector')
+# Test.assertTrue(isinstance(sampleThreeOHEFeatManual, SparseVector),
+#                 'sampleThreeOHEFeatManual needs to be a SparseVector')
+# Test.assertEqualsHashed(sampleOneOHEFeatManual,
+#                         'ecc00223d141b7bd0913d52377cee2cf5783abd6',
+#                         'incorrect value for sampleOneOHEFeatManual')
+# Test.assertEqualsHashed(sampleTwoOHEFeatManual,
+#                         '26b023f4109e3b8ab32241938e2e9b9e9d62720a',
+#                         'incorrect value for sampleTwoOHEFeatManual')
+# Test.assertEqualsHashed(sampleThreeOHEFeatManual,
+#                         'c04134fd603ae115395b29dcabe9d0c66fbdc8a7',
+#                         'incorrect value for sampleThreeOHEFeatManual')
 
 
 # #### **(1d) Define a OHE function **
@@ -200,13 +204,13 @@ print sampleOneOHEFeat
 # In[12]:
 
 # TEST Define an OHE Function (1d)
-Test.assertTrue(sampleOneOHEFeat == sampleOneOHEFeatManual,
-                'sampleOneOHEFeat should equal sampleOneOHEFeatManual')
-Test.assertEquals(sampleOneOHEFeat, SparseVector(7, [2,3], [1.0,1.0]),
-                  'incorrect value for sampleOneOHEFeat')
-Test.assertEquals(oneHotEncoding([(1, 'black'), (0, 'mouse')], sampleOHEDictManual,
-                                 numSampleOHEFeats), SparseVector(7, [2,3], [1.0,1.0]),
-                  'incorrect definition for oneHotEncoding')
+# Test.assertTrue(sampleOneOHEFeat == sampleOneOHEFeatManual,
+#                 'sampleOneOHEFeat should equal sampleOneOHEFeatManual')
+# Test.assertEquals(sampleOneOHEFeat, SparseVector(7, [2,3], [1.0,1.0]),
+#                   'incorrect value for sampleOneOHEFeat')
+# Test.assertEquals(oneHotEncoding([(1, 'black'), (0, 'mouse')], sampleOHEDictManual,
+#                                  numSampleOHEFeats), SparseVector(7, [2,3], [1.0,1.0]),
+#                   'incorrect definition for oneHotEncoding')
 
 
 # #### **(1e) Apply OHE to a dataset **
@@ -224,13 +228,13 @@ print sampleOHEData.collect()
 
 # TEST Apply OHE to a dataset (1e)
 sampleOHEDataValues = sampleOHEData.collect()
-Test.assertTrue(len(sampleOHEDataValues) == 3, 'sampleOHEData should have three elements')
-Test.assertEquals(sampleOHEDataValues[0], SparseVector(7, {2: 1.0, 3: 1.0}),
-                  'incorrect OHE for first sample')
-Test.assertEquals(sampleOHEDataValues[1], SparseVector(7, {1: 1.0, 4: 1.0, 5: 1.0}),
-                  'incorrect OHE for second sample')
-Test.assertEquals(sampleOHEDataValues[2], SparseVector(7, {0: 1.0, 3: 1.0, 6: 1.0}),
-                  'incorrect OHE for third sample')
+# Test.assertTrue(len(sampleOHEDataValues) == 3, 'sampleOHEData should have three elements')
+# Test.assertEquals(sampleOHEDataValues[0], SparseVector(7, {2: 1.0, 3: 1.0}),
+#                   'incorrect OHE for first sample')
+# Test.assertEquals(sampleOHEDataValues[1], SparseVector(7, {1: 1.0, 4: 1.0, 5: 1.0}),
+#                   'incorrect OHE for second sample')
+# Test.assertEquals(sampleOHEDataValues[2], SparseVector(7, {0: 1.0, 3: 1.0, 6: 1.0}),
+#                   'incorrect OHE for third sample')
 
 
 # ### ** Part 2: Construct an OHE dictionary **
@@ -249,10 +253,10 @@ sampleDistinctFeats = (sampleDataRDD.flatMap(lambda x : x).distinct())
 # In[16]:
 
 # TEST Pair RDD of (featureID, category) (2a)
-Test.assertEquals(sorted(sampleDistinctFeats.collect()),
-                  [(0, 'bear'), (0, 'cat'), (0, 'mouse'), (1, 'black'),
-                   (1, 'tabby'), (2, 'mouse'), (2, 'salmon')],
-                  'incorrect value for sampleDistinctFeats')
+# Test.assertEquals(sorted(sampleDistinctFeats.collect()),
+#                   [(0, 'bear'), (0, 'cat'), (0, 'mouse'), (1, 'black'),
+#                    (1, 'tabby'), (2, 'mouse'), (2, 'salmon')],
+#                   'incorrect value for sampleDistinctFeats')
 
 
 # #### ** (2b) OHE Dictionary from distinct features **
@@ -269,11 +273,11 @@ print sampleOHEDict
 # In[18]:
 
 # TEST OHE Dictionary from distinct features (2b)
-Test.assertEquals(sorted(sampleOHEDict.keys()),
-                  [(0, 'bear'), (0, 'cat'), (0, 'mouse'), (1, 'black'),
-                   (1, 'tabby'), (2, 'mouse'), (2, 'salmon')],
-                  'sampleOHEDict has unexpected keys')
-Test.assertEquals(sorted(sampleOHEDict.values()), range(7), 'sampleOHEDict has unexpected values')
+# Test.assertEquals(sorted(sampleOHEDict.keys()),
+#                   [(0, 'bear'), (0, 'cat'), (0, 'mouse'), (1, 'black'),
+#                    (1, 'tabby'), (2, 'mouse'), (2, 'salmon')],
+#                   'sampleOHEDict has unexpected keys')
+# Test.assertEquals(sorted(sampleOHEDict.values()), range(7), 'sampleOHEDict has unexpected values')
 
 
 # #### **(2c) Automated creation of an OHE dictionary **
@@ -304,12 +308,12 @@ print sampleOHEDictAuto
 # In[20]:
 
 # TEST Automated creation of an OHE dictionary (2c)
-Test.assertEquals(sorted(sampleOHEDictAuto.keys()),
-                  [(0, 'bear'), (0, 'cat'), (0, 'mouse'), (1, 'black'),
-                   (1, 'tabby'), (2, 'mouse'), (2, 'salmon')],
-                  'sampleOHEDictAuto has unexpected keys')
-Test.assertEquals(sorted(sampleOHEDictAuto.values()), range(7),
-                  'sampleOHEDictAuto has unexpected values')
+# Test.assertEquals(sorted(sampleOHEDictAuto.keys()),
+#                   [(0, 'bear'), (0, 'cat'), (0, 'mouse'), (1, 'black'),
+#                    (1, 'tabby'), (2, 'mouse'), (2, 'salmon')],
+#                   'sampleOHEDictAuto has unexpected keys')
+# Test.assertEquals(sorted(sampleOHEDictAuto.values()), range(7),
+#                   'sampleOHEDictAuto has unexpected values')
 
 
 # ### **Part 3: Parse CTR data and generate OHE features**
@@ -390,7 +394,8 @@ Test.assertEquals(sorted(sampleOHEDictAuto.values()), range(7),
 
 import os.path
 baseDir = os.path.join('data')
-inputPath = os.path.join('cs190', 'dac_sample.txt')
+inputPath = os.path.join('cs190', '/data/scratch/vw/criteo-display-advertising-dataset/train.txt')
+# inputPath = os.path.join('cs190', '/tmp/datasets/train.txt')
 fileName = os.path.join(baseDir, inputPath)
 
 if os.path.isfile(fileName):
@@ -425,11 +430,11 @@ print rawData.take(1)
 # In[25]:
 
 # TEST Loading and splitting the data (3a)
-Test.assertTrue(all([rawTrainData.is_cached, rawValidationData.is_cached, rawTestData.is_cached]),
-                'you must cache the split data')
-Test.assertEquals(nTrain, 79911, 'incorrect value for nTrain')
-Test.assertEquals(nVal, 10075, 'incorrect value for nVal')
-Test.assertEquals(nTest, 10014, 'incorrect value for nTest')
+# Test.assertTrue(all([rawTrainData.is_cached, rawValidationData.is_cached, rawTestData.is_cached]),
+#                 'you must cache the split data')
+# Test.assertEquals(nTrain, 79911, 'incorrect value for nTrain')
+# Test.assertEquals(nVal, 10075, 'incorrect value for nVal')
+# Test.assertEquals(nTest, 10014, 'incorrect value for nTest')
 
 
 # #### ** (3b) Extract features **
@@ -478,8 +483,8 @@ print numCategories[2][1]
 # In[28]:
 
 # TEST Extract features (3b)
-Test.assertEquals(numCategories[2][1], 855, 'incorrect implementation of parsePoint')
-Test.assertEquals(numCategories[32][1], 4, 'incorrect implementation of parsePoint')
+# Test.assertEquals(numCategories[2][1], 855, 'incorrect implementation of parsePoint')
+# Test.assertEquals(numCategories[32][1], 4, 'incorrect implementation of parsePoint')
 
 
 # #### **(3c) Create an OHE dictionary from the dataset **
@@ -497,8 +502,8 @@ print ctrOHEDict[(0, '')]
 # In[30]:
 
 # TEST Create an OHE dictionary from the dataset (3c)
-Test.assertEquals(numCtrOHEFeats, 233286, 'incorrect number of features in ctrOHEDict')
-Test.assertTrue((0, '') in ctrOHEDict, 'incorrect features in ctrOHEDict')
+# Test.assertEquals(numCtrOHEFeats, 233286, 'incorrect number of features in ctrOHEDict')
+# Test.assertTrue((0, '') in ctrOHEDict, 'incorrect features in ctrOHEDict')
 
 
 # #### ** (3d) Apply OHE to the dataset **
@@ -549,8 +554,8 @@ oneHotEncoding = backupOneHot
 # TEST Apply OHE to the dataset (3d)
 numNZ = sum(parsedTrainFeat.map(lambda x: len(x)).take(5))
 numNZAlt = sum(OHETrainData.map(lambda lp: len(lp.features.indices)).take(5))
-Test.assertEquals(numNZ, numNZAlt, 'incorrect implementation of parseOHEPoint')
-Test.assertTrue(withOneHot, 'oneHotEncoding not present in parseOHEPoint')
+# Test.assertEquals(numNZ, numNZAlt, 'incorrect implementation of parseOHEPoint')
+# Test.assertTrue(withOneHot, 'oneHotEncoding not present in parseOHEPoint')
 
 
 # #### **Visualization 1: Feature frequency **
@@ -651,7 +656,7 @@ print OHEValidationData.take(1)
 numNZVal = (OHEValidationData
             .map(lambda lp: len(lp.features.indices))
             .sum())
-Test.assertEquals(numNZVal, 372080, 'incorrect number of features')
+# Test.assertEquals(numNZVal, 372080, 'incorrect number of features')
 
 
 # ### ** Part 4: CTR prediction and logloss evaluation **
@@ -683,10 +688,10 @@ print sortedWeights[:5], model0.intercept
 # In[44]:
 
 # TEST Logistic regression (4a)
-Test.assertTrue(np.allclose(model0.intercept,  0.56455084025), 'incorrect value for model0.intercept')
-Test.assertTrue(np.allclose(sortedWeights[0:5],
-                [-0.45899236853575609, -0.37973707648623956, -0.36996558266753304,
-                 -0.36934962879928263, -0.32697945415010637]), 'incorrect value for model0.weights')
+# Test.assertTrue(np.allclose(model0.intercept,  0.56455084025), 'incorrect value for model0.intercept')
+# Test.assertTrue(np.allclose(sortedWeights[0:5],
+#                 [-0.45899236853575609, -0.37973707648623956, -0.36996558266753304,
+#                  -0.36934962879928263, -0.32697945415010637]), 'incorrect value for model0.weights')
 
 
 # #### ** (4b) Log loss **
@@ -735,12 +740,12 @@ print computeLogLoss(1, 0)
 # In[46]:
 
 # TEST Log loss (4b)
-Test.assertTrue(np.allclose([computeLogLoss(.5, 1), computeLogLoss(.01, 0), computeLogLoss(.01, 1)],
-                            [0.69314718056, 0.0100503358535, 4.60517018599]),
-                'computeLogLoss is not correct')
-Test.assertTrue(np.allclose([computeLogLoss(0, 1), computeLogLoss(1, 1), computeLogLoss(1, 0)],
-                            [25.3284360229, 1.00000008275e-11, 25.3284360229]),
-                'computeLogLoss needs to bound p away from 0 and 1 by epsilon')
+# Test.assertTrue(np.allclose([computeLogLoss(.5, 1), computeLogLoss(.01, 0), computeLogLoss(.01, 1)],
+#                             [0.69314718056, 0.0100503358535, 4.60517018599]),
+#                 'computeLogLoss is not correct')
+# Test.assertTrue(np.allclose([computeLogLoss(0, 1), computeLogLoss(1, 1), computeLogLoss(1, 0)],
+#                             [25.3284360229, 1.00000008275e-11, 25.3284360229]),
+#                 'computeLogLoss needs to bound p away from 0 and 1 by epsilon')
 
 
 # #### ** (4c)  Baseline log loss **
@@ -761,8 +766,8 @@ print 'Baseline Train Logloss = {0:.3f}\n'.format(logLossTrBase)
 # In[48]:
 
 # TEST Baseline log loss (4c)
-Test.assertTrue(np.allclose(classOneFracTrain, 0.22717773523), 'incorrect value for classOneFracTrain')
-Test.assertTrue(np.allclose(logLossTrBase, 0.535844), 'incorrect value for logLossTrBase')
+# Test.assertTrue(np.allclose(classOneFracTrain, 0.22717773523), 'incorrect value for classOneFracTrain')
+# Test.assertTrue(np.allclose(logLossTrBase, 0.535844), 'incorrect value for logLossTrBase')
 
 
 # #### ** (4d) Predicted probability **
@@ -804,8 +809,8 @@ print trainingPredictions.take(5)
 # In[51]:
 
 # TEST Predicted probability (4d)
-Test.assertTrue(np.allclose(trainingPredictions.sum(), 18135.4834348),
-                'incorrect value for trainingPredictions')
+# Test.assertTrue(np.allclose(trainingPredictions.sum(), 18135.4834348),
+#                 'incorrect value for trainingPredictions')
 
 
 # #### ** (4e) Evaluate the model **
@@ -837,7 +842,7 @@ print ('OHE Features Train Logloss:\n\tBaseline = {0:.3f}\n\tLogReg = {1:.3f}'
 # In[53]:
 
 # TEST Evaluate the model (4e)
-Test.assertTrue(np.allclose(logLossTrLR0, 0.456903), 'incorrect value for logLossTrLR0')
+# Test.assertTrue(np.allclose(logLossTrLR0, 0.456903), 'incorrect value for logLossTrLR0')
 
 
 # #### ** (4f) Validation log loss **
@@ -856,8 +861,8 @@ print ('OHE Features Validation Logloss:\n\tBaseline = {0:.3f}\n\tLogReg = {1:.3
 # In[55]:
 
 # TEST Validation log loss (4f)
-Test.assertTrue(np.allclose(logLossValBase, 0.527603), 'incorrect value for logLossValBase')
-Test.assertTrue(np.allclose(logLossValLR0, 0.456957), 'incorrect value for logLossValLR0')
+# Test.assertTrue(np.allclose(logLossValBase, 0.527603), 'incorrect value for logLossValBase')
+# Test.assertTrue(np.allclose(logLossValLR0, 0.456957), 'incorrect value for logLossValLR0')
 
 
 # #### **Visualization 2: ROC curve **
@@ -957,9 +962,9 @@ print 'SampleThree:\t {0}\t {1}'.format(sampThreeFourBuckets, sampThreeHundredBu
 # In[59]:
 
 # TEST Hash function (5a)
-Test.assertEquals(sampOneFourBuckets, {2: 1.0, 3: 1.0}, 'incorrect value for sampOneFourBuckets')
-Test.assertEquals(sampThreeHundredBuckets, {72: 1.0, 5: 1.0, 14: 1.0},
-                  'incorrect value for sampThreeHundredBuckets')
+# Test.assertEquals(sampOneFourBuckets, {2: 1.0, 3: 1.0}, 'incorrect value for sampOneFourBuckets')
+# Test.assertEquals(sampThreeHundredBuckets, {72: 1.0, 5: 1.0, 14: 1.0},
+#                   'incorrect value for sampThreeHundredBuckets')
 
 
 # #### ** (5b) Creating hashed features **
@@ -1018,13 +1023,13 @@ hashTestDataLabelSum = sum(hashTestData
                         .map(lambda lp: lp.label)
                         .take(100))
 
-Test.assertEquals(hashTrainDataFeatureSum, 772, 'incorrect number of features in hashTrainData')
-Test.assertEquals(hashTrainDataLabelSum, 24.0, 'incorrect labels in hashTrainData')
-Test.assertEquals(hashValidationDataFeatureSum, 776,
-                  'incorrect number of features in hashValidationData')
-Test.assertEquals(hashValidationDataLabelSum, 16.0, 'incorrect labels in hashValidationData')
-Test.assertEquals(hashTestDataFeatureSum, 774, 'incorrect number of features in hashTestData')
-Test.assertEquals(hashTestDataLabelSum, 23.0, 'incorrect labels in hashTestData')
+# Test.assertEquals(hashTrainDataFeatureSum, 772, 'incorrect number of features in hashTrainData')
+# Test.assertEquals(hashTrainDataLabelSum, 24.0, 'incorrect labels in hashTrainData')
+# Test.assertEquals(hashValidationDataFeatureSum, 776,
+#                   'incorrect number of features in hashValidationData')
+# Test.assertEquals(hashValidationDataLabelSum, 16.0, 'incorrect labels in hashValidationData')
+# Test.assertEquals(hashTestDataFeatureSum, 774, 'incorrect number of features in hashTestData')
+# Test.assertEquals(hashTestDataLabelSum, 23.0, 'incorrect labels in hashTestData')
 
 
 # #### ** (5c) Sparsity **
@@ -1057,10 +1062,10 @@ print 'Average Hash Sparsity: {0:.7e}'.format(averageSparsityHash)
 # In[76]:
 
 # TEST Sparsity (5c)
-Test.assertTrue(np.allclose(averageSparsityOHE, 1.6717677e-04),
-                'incorrect value for averageSparsityOHE')
-Test.assertTrue(np.allclose(averageSparsityHash, 1.1805561e-03),
-                'incorrect value for averageSparsityHash')
+# Test.assertTrue(np.allclose(averageSparsityOHE, 1.6717677e-04),
+#                 'incorrect value for averageSparsityOHE')
+# Test.assertTrue(np.allclose(averageSparsityHash, 1.1805561e-03),
+#                 'incorrect value for averageSparsityHash')
 
 
 # #### ** (5d) Logistic model with hashed features **
@@ -1101,7 +1106,7 @@ print ('Hashed Features Validation Logloss:\n\tBaseline = {0:.3f}\n\tLogReg = {1
 # In[80]:
 
 # TEST Logistic model with hashed features (5d)
-Test.assertTrue(np.allclose(bestLogLoss, 0.4481683608), 'incorrect value for bestLogLoss')
+# Test.assertTrue(np.allclose(bestLogLoss, 0.4481683608), 'incorrect value for bestLogLoss')
 
 
 # #### **Visualization 3: Hyperparameter heat map**
@@ -1156,7 +1161,7 @@ print ('Hashed Features Test Log Loss:\n\tBaseline = {0:.3f}\n\tLogReg = {1:.3f}
 # In[83]:
 
 # TEST Evaluate on the test set (5e)
-Test.assertTrue(np.allclose(logLossTestBaseline, 0.537438),
-                'incorrect value for logLossTestBaseline')
-Test.assertTrue(np.allclose(logLossTest, 0.455616931), 'incorrect value for logLossTest')
+# Test.assertTrue(np.allclose(logLossTestBaseline, 0.537438),
+#                 'incorrect value for logLossTestBaseline')
+# Test.assertTrue(np.allclose(logLossTest, 0.455616931), 'incorrect value for logLossTest')
 

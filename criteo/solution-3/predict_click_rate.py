@@ -17,7 +17,9 @@ from pyspark.sql import SQLContext
 
 def generateOHD(feature_set):
     # return feature_set.flatMap(lambda x: x).distinct().zipWithIndex().collectAsMap()
-    return feature_set.flatMap(lambda x:x).distinct().zipWithIndex().collectAsMap()
+    features = feature_set.flatMap(lambda x:x).distinct()
+    ohe_dict = features.zipWithIndex().collectAsMap()
+    return ohe_dict  
 
 # (sampleDataRDD.flatMap(lambda x : x).distinct())
 
@@ -144,16 +146,21 @@ def model_with_logistic_regression(trainingData, validationData):
 
 
 def main():
-    input_file = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"
+    # input_file = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"
+    input_file = "/tmp/datasets/train.txt"
     # sys.argv[1]  # Takes in the training data file as the input.
     # outputPath = sys.argv[2]
-    outputPath = '/data/vw/criteo-display-advertising-dataset/'
+    # outputPath = '/data/vw/criteo-display-advertising-dataset/'
+    outputPath = '/tmp/datasets/'
     # NBPath = sys.argv[3]
-    NBPath = '/data/vw/criteo-display-advertising-dataset/'
+    # NBPath = '/data/vw/criteo-display-advertising-dataset/'
+    NBPath = '/tmp/datasets/'
     # SVMPath = sys.argv[4]
-    SVMPath = '/data/vw/criteo-display-advertising-dataset/'
+    # SVMPath = '/data/vw/criteo-display-advertising-dataset/'
+    SVMPath = '/tmp/datasets/'
     # LRPath = sys.argv[5]
-    LRPath = '/data/vw/criteo-display-advertising-dataset/'
+    # LRPath = '/data/vw/criteo-display-advertising-dataset/'
+    LRPath = '/tmp/datasets/'
 
     conf = SparkConf().setAppName('Click Prediction')
     conf.set("spark.storage.memoryFraction", "0.40")
@@ -167,13 +174,14 @@ def main():
     # adsRDD = sc.textFile(input).map(lambda x : unicode(x.replace('\n', '').replace('\t', ','))).cache()
     # adsRDD = sc.textFile(input_file).map(lambda x : unicode(x.replace('\n', '').replace('\t', ',')))
     adsRDD = sc.textFile(input_file).map(lambda x: unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file)
+    print('-------------adsRDD ok------------')
     ##totalads = adsRDD.count()
     
     # Split the ad data into training set, validation set, and test set.
     # As the data instances are big enough we don't need to perform cross
     # validation. So we can simply split the data into 70-15-15 proportions.
     trainingSet, validationSet, testSet = adsRDD.randomSplit([.7, .15, .15], 25)
-
+    print('-------------Split ok------------')
     # ##Let's cache the above 3 RDDs as we will be using them during the models traning.
     # ##I already lost marks in the assignment for this reason. Don't wanna repeat it.
     # trainingSet.cache()
@@ -183,12 +191,12 @@ def main():
     # Parse the feature of each ad and turn them into the form [featureId,
     # (features)]
     trainingSetFeatures = trainingSet.map(featureParser)
-    
+    print('-------------trainingSetFeatures ok------------')
+
     # Create one hot encoding dictionary for the features of the ad.
     oneHotDictForTheAd = generateOHD(trainingSetFeatures)
-    # print '****************** OHD*************' +
-    # oneHotDictForTheAd.collect()
-
+    oneHotDictForTheAd.collect()
+    print('-------------oneHotDictForTheAd ok------------')
     numberOfFeatures = len(oneHotDictForTheAd.keys())
 
     # Generate labelled Sparse vector for the training and validation set
