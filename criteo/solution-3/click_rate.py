@@ -8,36 +8,36 @@ from math import exp #  exp(-t) = e^-t
 from operator import add
 import sys
 
-print "--------------------creating context.. ------------"
 # input_file = sys.argv[1]
 input_file = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"  # Should be some file on your system
 
 
+print ("--------------------creating context.. ------------")
 conf = SparkConf().setAppName('Click Prediction')
 conf.set("spark.storage.memoryFraction", "0.40")
 sc = SparkContext(conf=conf)
 # sc = SparkContext("local[4]", "ClickRatePrediction") ##run on local with 4 cores, named it "ClickRatePrediction"
-print "-------------------Finished creating context..------------"
+print ("-------------------Finished creating context..------------")
 
-print "--------------------Creating parse text file-----------"
+print ("--------------------Creating parse text file-----------")
 # input_file = open(input_file)
 # dacData = [unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file]
-dacData = sc.textFile(input_file).map(lambda x: unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file).cache()
+dacData = sc.textFile(input_file).map(lambda x: unicode(x.replace('\n', '').replace('\t', ',')) for x in input_file)
 
 
-print "-------------------Parse text was created!-----------"
+print ("-------------------Parse text was created!-----------")
 
-print "-------------------Creating RDD!! ------------------------"
+print ("-------------------Creating RDD!! ------------------------")
 rawData  = (sc
             .parallelize(dacData, 4)  # Create an RDD
             .zipWithIndex()  # Enumerate lines
             .map(lambda v, i: (i, v))  # Use line index as key
             .partitionBy(2, lambda i: not (i < 50026)) 
             .map(lambda i, v: v))  # Remove index
-print "------------------- RDD  was created------------------------"
+print ("------------------- RDD  was created------------------------")
 
 
-print "-----split data to train, validation and test------"
+print ("-----split data to train, validation and test------")
 weights = [.8, .1, .1] ## split to 80% train, 10% for validation and 10% for test 
 seed = 42
 # Use randomSplit with weights and seed
@@ -47,7 +47,7 @@ rawTrainData.cache()
 rawValidationData.cache()
 rawTestData.cache()
 
-print "-----/split data to train, validation and test------"
+print ("-----/split data to train, validation and test------")
 
 
 
@@ -105,10 +105,10 @@ regParam = 1e-6
 regType = 'l2'
 includeIntercept = True
 
-print "-------------logistic regression with gradient descent---------"
+print ("-------------logistic regression with gradient descent---------")
 model0 = LogisticRegressionWithSGD.train(data=OHETrainData, iterations=numIters, step=stepSize,regParam=regParam, regType=regType, intercept=includeIntercept) ##train model
 sortedWeights = sorted(model0.weights)
-print "------------/logistic regression with gradient descent---------"
+print ("------------/logistic regression with gradient descent---------")
 
 
 def computeLogLoss(p, y):
@@ -154,7 +154,7 @@ LogLossTrLR0 = evaluateResults(model0, OHETrainData) ## evaluate model vs base
 
 logLossValBase = OHEValidationData.map(lambda x:computeLogLoss(classOneFracTrain, x.label)).mean() ##log loss of validation data for mean of labels
 
-print "----------------------find best hyperparameters for logistic regression--------"
+print ("----------------------find best hyperparameters for logistic regression--------")
 ## NOTE: maybe first hash features then iterate for best model
 numIters = 500
 regType = 'l2'
@@ -182,19 +182,19 @@ for stepSize in stepSizes:
 print ('Features Validation Logloss:\n\tBaseline = {0:.3f}\n\tLogReg = {1:.3f}'
        .format(logLossValBase, bestLogLoss))
 
-print "---------------------/find best hyperparameters for logistic regression--------"
+print ("---------------------/find best hyperparameters for logistic regression--------")
 
-print "-------------------predict on test data----------------------------------------"
+print ("-------------------predict on test data----------------------------------------")
 OHETestData = rawTestData.map(lambda point: parseOHEPoint(point, ctrOHEDict, numCtrOHEFeats))
 
 finalModel = LogisticRegressionWithSGD.train(OHETrainData, numIters, step=10., regParam=1e-3, regType=regType,intercept=includeIntercept)
 
 labelsAndPredsTest = OHETestData.map(lambda lp: (lp.label, finalModel.predict(lp.features)))
 
-print "number of observations in test data:"
+print ("number of observations in test data:")
 print labelsAndPredsTest.count() ## 10014
-print "number of true positives + true negatives:"
-print labelsAndPredsTest.filter(lambda x: x[0] == x[1]).count() ## 7957
+print ("number of true positives + true negatives:")
+print (labelsAndPredsTest.filter(lambda x: x[0] == x[1]).count()) ## 7957
 
 
 sc.stop() ##stop context

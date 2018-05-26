@@ -1,13 +1,18 @@
-from pyspark import SparkContext, SparkConf
+import math
+import os
+import sys
+
+from operator import add
+from pyspark import SparkConf
+from pyspark import SparkContext
+from pyspark.mllib.classification import LogisticRegressionWithSGD
+from pyspark.mllib.classification import NaiveBayes
+from pyspark.mllib.classification import NaiveBayesModel
+from pyspark.mllib.classification import SVMModel
+from pyspark.mllib.classification import SVMWithSGD
 from pyspark.mllib.linalg import SparseVector
 from pyspark.mllib.regression import LabeledPoint
-from pyspark.mllib.classification import LogisticRegressionWithSGD, NaiveBayes, NaiveBayesModel,SVMWithSGD, SVMModel
 from pyspark.sql import SQLContext
-import numpy as np
-import math
-from operator import add
-import sys
-import os
 
 
 def generateOHD(feature_set):
