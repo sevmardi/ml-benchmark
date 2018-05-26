@@ -26,8 +26,8 @@ object test {
     // Load training data in LIBSVM format.
     //val train = MLUtils.loadLibSVMFile(sc, "s3n://bidmach/RCV1train6.libsvm", true, 276544, nnodes*4)
     //val test = MLUtils.loadLibSVMFile(sc, "s3n://bidmach/RCV1test6.libsvm", true, 276544, nnodes*4)
-    val train = MLUtils.loadLibSVMFile(sc, "/ebs2/preprocess/xaa", 262165, 1)
-    val test = MLUtils.loadLibSVMFile(sc, "/ebs2/preprocess/xab", 262165, 1)
+    val train = MLUtils.loadLibSVMFile(sc, "/local/xaa", 262165, 1)
+    val test = MLUtils.loadLibSVMFile(sc, "/local/xab", 262165, 1)
     train.coalesce(1)
 
     //262146
