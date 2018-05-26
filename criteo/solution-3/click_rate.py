@@ -192,7 +192,7 @@ finalModel = LogisticRegressionWithSGD.train(OHETrainData, numIters, step=10., r
 labelsAndPredsTest = OHETestData.map(lambda lp: (lp.label, finalModel.predict(lp.features)))
 
 print ("number of observations in test data:")
-print labelsAndPredsTest.count() ## 10014
+print (labelsAndPredsTest.count()) ## 10014
 print ("number of true positives + true negatives:")
 print (labelsAndPredsTest.filter(lambda x: x[0] == x[1]).count()) ## 7957
 
