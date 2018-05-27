@@ -198,7 +198,7 @@ numSampleOHEFeats = len(sampleOHEDictManual)
 # Run oneHotEnoding on sampleOne
 sampleOneOHEFeat = oneHotEncoding(sampleOne, sampleOHEDictManual, numSampleOHEFeats)
 
-print sampleOneOHEFeat
+# print sampleOneOHEFeat
 
 
 # In[12]:
@@ -221,13 +221,13 @@ print sampleOneOHEFeat
 # TODO: Replace <FILL IN> with appropriate code
 #sampleDataRDD.collect()
 sampleOHEData = sampleDataRDD.map(lambda x : oneHotEncoding(x, sampleOHEDictManual, numSampleOHEFeats))
-print sampleOHEData.collect()
+# print sampleOHEData.collect()
 
 
 # In[14]:
 
 # TEST Apply OHE to a dataset (1e)
-sampleOHEDataValues = sampleOHEData.collect()
+# sampleOHEDataValues = sampleOHEData.collect()
 # Test.assertTrue(len(sampleOHEDataValues) == 3, 'sampleOHEData should have three elements')
 # Test.assertEquals(sampleOHEDataValues[0], SparseVector(7, {2: 1.0, 3: 1.0}),
 #                   'incorrect OHE for first sample')
@@ -246,7 +246,7 @@ sampleOHEDataValues = sampleOHEData.collect()
 
 # TODO: Replace <FILL IN> with appropriate code
 #print sampleDataRDD.collect()
-sampleDistinctFeats = (sampleDataRDD.flatMap(lambda x : x).distinct())
+# sampleDistinctFeats = (sampleDataRDD.flatMap(lambda x : x).distinct())
 #print sampleDistinctFeats.collect()
 
 
@@ -266,8 +266,8 @@ sampleDistinctFeats = (sampleDataRDD.flatMap(lambda x : x).distinct())
 # In[17]:
 
 # TODO: Replace <FILL IN> with appropriate code
-sampleOHEDict = (sampleDistinctFeats.zipWithIndex().collectAsMap())
-print sampleOHEDict
+# sampleOHEDict = (sampleDistinctFeats.zipWithIndex().collectAsMap())
+# print sampleOHEDict
 
 
 # In[18]:
@@ -299,10 +299,11 @@ def createOneHotDict(inputData):
     """
     features = inputData.flatMap(lambda x : x).distinct()
     OHEDict = features.zipWithIndex().collectAsMap()
+    print("--------------------------One hot was created! ------------- ")
     return OHEDict
 
-sampleOHEDictAuto = createOneHotDict(sampleDataRDD)
-print sampleOHEDictAuto
+# sampleOHEDictAuto = createOneHotDict(sampleDataRDD)
+# print sampleOHEDictAuto
 
 
 # In[20]:
@@ -402,7 +403,7 @@ if os.path.isfile(fileName):
     rawData = (sc
                .textFile(fileName, 2)
                .map(lambda x: x.replace('\t', ',')))  # work with either ',' or '\t' separated data
-    print rawData.take(1)
+    # print rawData.take(1)
 
 
 # #### **(3a) Loading and splitting the data **
@@ -424,7 +425,7 @@ nTrain = rawTrainData.count()
 nVal = rawValidationData.count()
 nTest = rawTestData.count()
 print nTrain, nVal, nTest, nTrain + nVal + nTest
-print rawData.take(1)
+# print rawData.take(1)
 
 
 # In[25]:
@@ -477,7 +478,7 @@ numCategories = (parsedTrainFeat
                  .sortByKey()
                  .collect())
 
-print numCategories[2][1]
+# print numCategories[2][1]
 
 
 # In[28]:
@@ -493,10 +494,10 @@ print numCategories[2][1]
 # In[29]:
 
 # TODO: Replace <FILL IN> with appropriate code
-ctrOHEDict = createOneHotDict(parsedTrainFeat)
-numCtrOHEFeats = len(ctrOHEDict.keys())
-print numCtrOHEFeats
-print ctrOHEDict[(0, '')]
+# ctrOHEDict = createOneHotDict(parsedTrainFeat)
+# numCtrOHEFeats = len(ctrOHEDict.keys())
+# print numCtrOHEFeats
+# print ctrOHEDict[(0, '')]
 
 
 # In[30]:
@@ -538,7 +539,7 @@ def parseOHEPoint(point, OHEDict, numOHEFeats):
 
 OHETrainData = rawTrainData.map(lambda point: parseOHEPoint(point, ctrOHEDict, numCtrOHEFeats))
 OHETrainData.cache()
-print OHETrainData.take(1)
+# print OHETrainData.take(1)
 
 # Check that oneHotEncoding function was used in parseOHEPoint
 backupOneHot = oneHotEncoding
@@ -580,7 +581,7 @@ featCountsBuckets = (featCounts
                      .filter(lambda k, v: k != -1)
                      .reduceByKey(lambda x, y: x + y)
                      .collect())
-print featCountsBuckets
+# print featCountsBuckets
 
 
 # In[39]:
@@ -609,7 +610,10 @@ def preparePlot(xticks, yticks, figsize=(10.5, 6), hideLabels=False, gridColor='
 fig, ax = preparePlot(np.arange(0, 10, 1), np.arange(4, 14, 2))
 ax.set_xlabel(r'$\log_e(bucketSize)$'), ax.set_ylabel(r'$\log_e(countInBucket)$')
 plt.scatter(x, y, s=14**2, c='#d6ebf2', edgecolors='#8cbfd0', alpha=0.75)
-pass
+plt.savefig('foo.png')
+
+
+# pass
 
 
 # #### **(3e) Handling unseen features **
@@ -647,7 +651,7 @@ def oneHotEncoding(rawFeats, OHEDict, numOHEFeats):
 
 OHEValidationData = rawValidationData.map(lambda point: parseOHEPoint(point, ctrOHEDict, numCtrOHEFeats))
 OHEValidationData.cache()
-print OHEValidationData.take(1)
+# print OHEValidationData.take(1)
 
 
 # In[41]:
@@ -682,7 +686,7 @@ includeIntercept = True
 model0 =  LogisticRegressionWithSGD.train(OHETrainData,iterations=numIters,step=stepSize,regParam=regParam,
                                   regType=regType,intercept=includeIntercept)
 sortedWeights = sorted(model0.weights)
-print sortedWeights[:5], model0.intercept
+# print sortedWeights[:5], model0.intercept
 
 
 # In[44]:
@@ -757,7 +761,7 @@ print computeLogLoss(1, 0)
 # Note that our dataset has a very high click-through rate by design
 # In practice click-through rate can be one to two orders of magnitude lower
 classOneFracTrain = OHETrainData.map(lambda lp: lp.label).mean()
-print classOneFracTrain
+# print classOneFracTrain
 
 logLossTrBase = OHETrainData.map(lambda lp: computeLogLoss(classOneFracTrain, lp.label)).mean()
 print 'Baseline Train Logloss = {0:.3f}\n'.format(logLossTrBase)
@@ -803,7 +807,7 @@ def getP(x, w, intercept):
 
 trainingPredictions = OHETrainData.map(lambda x: getP(x.features, model0.weights, model0.intercept))
 
-print trainingPredictions.take(5)
+# print trainingPredictions.take(5)
 
 
 # In[51]:
@@ -891,7 +895,7 @@ ax.set_ylabel('True Positive Rate (Sensitivity)')
 ax.set_xlabel('False Positive Rate (1 - Specificity)')
 plt.plot(falsePositiveRate, truePositiveRate, color='#8cbfd0', linestyle='-', linewidth=3.)
 plt.plot((0., 1.), (0., 1.), linestyle='--', color='#d6ebf2', linewidth=2.)  # Baseline model
-plt.save()
+plt.savefig('foo2.png')
 
 
 
@@ -953,10 +957,10 @@ sampOneHundredBuckets = hashFunction(100, sampleOne, True)
 sampTwoHundredBuckets = hashFunction(100, sampleTwo, True)
 sampThreeHundredBuckets = hashFunction(100, sampleThree, True)
 
-print '\t\t 4 Buckets \t\t\t 100 Buckets'
-print 'SampleOne:\t {0}\t\t {1}'.format(sampOneFourBuckets, sampOneHundredBuckets)
-print 'SampleTwo:\t {0}\t\t {1}'.format(sampTwoFourBuckets, sampTwoHundredBuckets)
-print 'SampleThree:\t {0}\t {1}'.format(sampThreeFourBuckets, sampThreeHundredBuckets)
+# print '\t\t 4 Buckets \t\t\t 100 Buckets'
+# print 'SampleOne:\t {0}\t\t {1}'.format(sampOneFourBuckets, sampOneHundredBuckets)
+# print 'SampleTwo:\t {0}\t\t {1}'.format(sampTwoFourBuckets, sampTwoHundredBuckets)
+# print 'SampleThree:\t {0}\t {1}'.format(sampThreeFourBuckets, sampThreeHundredBuckets)
 
 
 # In[59]:
@@ -998,30 +1002,30 @@ hashValidationData.cache()
 hashTestData = rawTestData.map(lambda point: parseHashPoint(point, numBucketsCTR))
 hashTestData.cache()
 
-print hashTrainData.take(1)
+# print hashTrainData.take(1)
 
 
 # In[74]:
 
 # TEST Creating hashed features (5b)
-hashTrainDataFeatureSum = sum(hashTrainData
-                           .map(lambda lp: len(lp.features.indices))
-                           .take(20))
-hashTrainDataLabelSum = sum(hashTrainData
-                         .map(lambda lp: lp.label)
-                         .take(100))
-hashValidationDataFeatureSum = sum(hashValidationData
-                                .map(lambda lp: len(lp.features.indices))
-                                .take(20))
-hashValidationDataLabelSum = sum(hashValidationData
-                              .map(lambda lp: lp.label)
-                              .take(100))
-hashTestDataFeatureSum = sum(hashTestData
-                          .map(lambda lp: len(lp.features.indices))
-                          .take(20))
-hashTestDataLabelSum = sum(hashTestData
-                        .map(lambda lp: lp.label)
-                        .take(100))
+# hashTrainDataFeatureSum = sum(hashTrainData
+#                            .map(lambda lp: len(lp.features.indices))
+#                            .take(20))
+# hashTrainDataLabelSum = sum(hashTrainData
+#                          .map(lambda lp: lp.label)
+#                          .take(100))
+# hashValidationDataFeatureSum = sum(hashValidationData
+#                                 .map(lambda lp: len(lp.features.indices))
+#                                 .take(20))
+# hashValidationDataLabelSum = sum(hashValidationData
+#                               .map(lambda lp: lp.label)
+#                               .take(100))
+# hashTestDataFeatureSum = sum(hashTestData
+#                           .map(lambda lp: len(lp.features.indices))
+#                           .take(20))
+# hashTestDataLabelSum = sum(hashTestData
+#                         .map(lambda lp: lp.label)
+#                         .take(100))
 
 # Test.assertEquals(hashTrainDataFeatureSum, 772, 'incorrect number of features in hashTrainData')
 # Test.assertEquals(hashTrainDataLabelSum, 24.0, 'incorrect labels in hashTrainData')
@@ -1098,7 +1102,7 @@ for stepSize in stepSizes:
         if (logLossVa < bestLogLoss):
             bestModel = model
             bestLogLoss = logLossVa
-print bestLogLoss
+# print bestLogLoss
 print ('Hashed Features Validation Logloss:\n\tBaseline = {0:.3f}\n\tLogReg = {1:.3f}'
        .format(logLossValBase, bestLogLoss))
 
@@ -1137,9 +1141,9 @@ ax.set_xticklabels(regParams), ax.set_yticklabels(stepSizes)
 ax.set_xlabel('Regularization Parameter'), ax.set_ylabel('Step Size')
 
 colors = LinearSegmentedColormap.from_list('blue', ['#0022ff', '#000055'], gamma=.2)
-image = plt.imshow(logLoss,interpolation='nearest', aspect='auto',
-                    cmap = colors)
-pass
+image = plt.imshow(logLoss,interpolation='nearest', aspect='auto', cmap = colors)
+plt.savefig('foo2.png')
+# pass
 
 
 # #### ** (5e) Evaluate on the test set **
