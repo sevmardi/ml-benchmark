@@ -83,6 +83,13 @@ def getP(x, w, intercept):
 	rawPrediction = max(rawPrediction, -20)
 	return 1/(1 + exp(-rawPrediction))
 
+def evaluateResults(model, data):
+	return (data
+            .map(lambda x: (x.label, getP(x.features, model.weights, model.intercept)))
+            .map(lambda (x,y): computeLogLoss(y,x))
+            .mean())
+
+
 
 if __name__ == '__main__':
     conf = SparkConf().setAppName('Click Prediction')
@@ -98,7 +105,7 @@ if __name__ == '__main__':
     # numSampleOHEFeats = len(sampleOHEDictManual)
     # sampleOHEData = sampleDataRDD.map(lambda x: oneHotEncoding(x, sampleOHEDictManual, numSampleOHEFeats))
 
-    fileName = "/tmp/datasets/train.txt"
+    fileName = "/local/criteo/train.txt"
 
     # work with either ',' or '\t' separated data
     rawData = (sc.textFile(fileName, 2).map(lambda x: x.replace('\t', ',')))
@@ -189,3 +196,9 @@ if __name__ == '__main__':
     print ('Baseline Train Logloss = {0:.3f}\n'.format(logLossTrBase))
 
     trainingPredictions = OHETrainData.map(lambda x: getP(x.features, model0.weights, model0.intercept))
+
+    logLossTrLR0 = evaluateResults(model0, OHETrainData)
+
+    print ('OHE Features Train Logloss:\n\tBaseline = {0:.3f}\n\tLogReg = {1:.3f}'
+       .format(logLossTrBase, logLossTrLR0))
+    
