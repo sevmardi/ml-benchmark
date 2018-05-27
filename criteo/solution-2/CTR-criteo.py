@@ -494,8 +494,8 @@ numCategories = (parsedTrainFeat
 # In[29]:
 
 # TODO: Replace <FILL IN> with appropriate code
-# ctrOHEDict = createOneHotDict(parsedTrainFeat)
-# numCtrOHEFeats = len(ctrOHEDict.keys())
+ctrOHEDict = createOneHotDict(parsedTrainFeat)
+numCtrOHEFeats = len(ctrOHEDict.keys())
 # print numCtrOHEFeats
 # print ctrOHEDict[(0, '')]
 
