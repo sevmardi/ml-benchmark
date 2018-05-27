@@ -1,6 +1,8 @@
 import numpy as np
 import os.path
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from math import exp
