@@ -90,7 +90,7 @@ def evaluateResults(model, data):
             .map(lambda x: (x.label, getP(x.features, model.weights, model.intercept)))
             .map(lambda (x,y): computeLogLoss(y,x))
             .mean())
-
+# input_file = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"
 
 
 if __name__ == '__main__':
@@ -107,8 +107,8 @@ if __name__ == '__main__':
     # numSampleOHEFeats = len(sampleOHEDictManual)
     # sampleOHEData = sampleDataRDD.map(lambda x: oneHotEncoding(x, sampleOHEDictManual, numSampleOHEFeats))
 
-    fileName = "/local/criteo/train.txt"
-
+    # fileName = "/local/criteo/train.txt"
+    fileName = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"
     # work with either ',' or '\t' separated data
     rawData = (sc.textFile(fileName, 2).map(lambda x: x.replace('\t', ',')))
     print("----------------------Data was loaded----------------------")
@@ -187,7 +187,7 @@ if __name__ == '__main__':
 
     model0 =  LogisticRegressionWithSGD.train(OHETrainData,iterations=numIters,step=stepSize,regParam=regParam,
                                   regType=regType,intercept=includeIntercept)
-
+    print("----------------------LogisticRegressionWithSGD was finished!----------------------")
     sortedWeights = sorted(model0.weights)
 
     # print computeLogLoss(.5, 1)
