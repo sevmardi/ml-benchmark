@@ -47,15 +47,15 @@ sampleDataRDD = sc.parallelize([sampleOne, sampleTwo, sampleThree])
 # TODO: Replace <FILL IN> with appropriate code
 #print sampleOne
 #print type(sampleOne)
-sampleOHEDictManual = {}
-sampleOHEDictManual[(0,'bear')] = 0
-sampleOHEDictManual[(0,'cat')] = 1
-sampleOHEDictManual[(0,'mouse')] = 2
-#print sampleOHEDictManual
-sampleOHEDictManual[(1, 'black')] = 3
-sampleOHEDictManual[(1, 'tabby')] = 4
-sampleOHEDictManual[(2, 'mouse')] = 5
-sampleOHEDictManual[(2, 'salmon')] = 6
+# sampleOHEDictManual = {}
+# sampleOHEDictManual[(0,'bear')] = 0
+# sampleOHEDictManual[(0,'cat')] = 1
+# sampleOHEDictManual[(0,'mouse')] = 2
+# #print sampleOHEDictManual
+# sampleOHEDictManual[(1, 'black')] = 3
+# sampleOHEDictManual[(1, 'tabby')] = 4
+# sampleOHEDictManual[(2, 'mouse')] = 5
+# sampleOHEDictManual[(2, 'salmon')] = 6
 
 
 # In[4]:
@@ -139,9 +139,9 @@ print bSparse.dot(w)
 # In[9]:
 
 # TODO: Replace <FILL IN> with appropriate code
-sampleOneOHEFeatManual = SparseVector(7, {2:1.0, 3:1.0})
-sampleTwoOHEFeatManual = SparseVector(7, {1:1.0, 4:1.0, 5:1.0})
-sampleThreeOHEFeatManual = SparseVector(7, {0:1.0, 3:1.0, 6:1.0})
+# sampleOneOHEFeatManual = SparseVector(7, {2:1.0, 3:1.0})
+# sampleTwoOHEFeatManual = SparseVector(7, {1:1.0, 4:1.0, 5:1.0})
+# sampleThreeOHEFeatManual = SparseVector(7, {0:1.0, 3:1.0, 6:1.0})
 
 
 # In[10]:
@@ -196,7 +196,7 @@ def oneHotEncoding(rawFeats, OHEDict, numOHEFeats):
 numSampleOHEFeats = len(sampleOHEDictManual)
 
 # Run oneHotEnoding on sampleOne
-sampleOneOHEFeat = oneHotEncoding(sampleOne, sampleOHEDictManual, numSampleOHEFeats)
+# sampleOneOHEFeat = oneHotEncoding(sampleOne, sampleOHEDictManual, numSampleOHEFeats)
 
 # print sampleOneOHEFeat
 
@@ -395,16 +395,15 @@ def createOneHotDict(inputData):
 
 import os.path
 baseDir = os.path.join('data')
-inputPath = os.path.join('cs190', '/data/scratch/vw/criteo-display-advertising-dataset/train.txt')
+inputPath = os.path.join('cs190', '/local/criteo/train.txt')
 # inputPath = os.path.join('cs190', '/tmp/datasets/train.txt')
 fileName = os.path.join(baseDir, inputPath)
 
 if os.path.isfile(fileName):
-    rawData = (sc
-               .textFile(fileName, 2)
-               .map(lambda x: x.replace('\t', ',')))  # work with either ',' or '\t' separated data
+    rawData = (sc.textFile(fileName, 2).map(lambda x: x.replace('\t', ',')))  # work with either ',' or '\t' separated data
     # print rawData.take(1)
 
+print("----------------------Data was loaded----------------------")
 
 # #### **(3a) Loading and splitting the data **
 # #### We are now ready to start working with the actual CTR data, and our first task involves splitting it into training, validation, and test sets.  Use the [randomSplit method](https://spark.apache.org/docs/latest/api/python/pyspark.html#pyspark.RDD.randomSplit) with the specified weights and seed to create RDDs storing each of these datasets, and then [cache](https://spark.apache.org/docs/latest/api/python/pyspark.html#pyspark.RDD.cache) each of these RDDs, as we will be accessing them multiple times in the remainder of this lab. Finally, compute the size of each dataset.
@@ -424,7 +423,7 @@ rawTestData.cache()
 nTrain = rawTrainData.count()
 nVal = rawValidationData.count()
 nTest = rawTestData.count()
-print nTrain, nVal, nTest, nTrain + nVal + nTest
+# print nTrain, nVal, nTest, nTrain + nVal + nTest
 # print rawData.take(1)
 
 
@@ -657,9 +656,9 @@ OHEValidationData.cache()
 # In[41]:
 
 # TEST Handling unseen features (3e)
-numNZVal = (OHEValidationData
-            .map(lambda lp: len(lp.features.indices))
-            .sum())
+# numNZVal = (OHEValidationData
+#             .map(lambda lp: len(lp.features.indices))
+#             .sum())
 # Test.assertEquals(numNZVal, 372080, 'incorrect number of features')
 
 
