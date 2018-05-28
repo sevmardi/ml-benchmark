@@ -88,7 +88,7 @@ def getP(x, w, intercept):
 def evaluateResults(model, data):
 	return (data
             .map(lambda x: (x.label, getP(x.features, model.weights, model.intercept)))
-            .map(lambda (x,y): computeLogLoss(y,x))
+            .map(lambda x,y: computeLogLoss(y,x))
             .mean())
 # input_file = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"
 
@@ -171,7 +171,7 @@ if __name__ == '__main__':
     # x, y = np.log(x), np.log(y)
 
     # print("-------------------------------Feat Count buckts was finished!")
-    
+
 
 
     # fig, ax = preparePlot(np.arange(0, 10, 1), np.arange(4, 14, 2))
