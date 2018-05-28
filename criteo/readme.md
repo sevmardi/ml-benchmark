@@ -37,6 +37,7 @@ Soon!
 sbt package
 ./run.sh 
 
+split -l 40000000 output.svm           # splits the data into xaa and xab, the training and test set, respectively 
 ```
 
 ## Process
