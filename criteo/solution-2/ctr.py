@@ -142,65 +142,66 @@ if __name__ == '__main__':
     OHETrainData = rawTrainData.map(lambda point: parseOHEPoint(point, ctrOHEDict, numCtrOHEFeats))
     print("----------------------OHETrainData loaded----------------------")
     OHETrainData.cache()
-
-    # Check that oneHotEncoding function was used in parseOHEPoint
-    backupOneHot = oneHotEncoding
-    oneHotEncoding = None
-    withOneHot = False
-    try: parseOHEPoint(rawTrainData.take(1)[0], ctrOHEDict, numCtrOHEFeats)
-    except TypeError: withOneHot = True
-    oneHotEncoding = backupOneHot
-
-
-    numNZ = sum(parsedTrainFeat.map(lambda x: len(x)).take(5))
-    numNZAlt = sum(OHETrainData.map(lambda lp: len(lp.features.indices)).take(5))
-
-    featCounts = (OHETrainData
-              .flatMap(lambda lp: lp.features.indices)
-              .map(lambda x: (x, 1))
-              .reduceByKey(lambda x, y: x + y))
-
-    featCountsBuckets = (featCounts
-                     .map(lambda x: (bucketFeatByCount(x[1]), 1))
-                     .filter(lambda k, v: k != -1)
-                     .reduceByKey(lambda x, y: x + y)
-                     .collect())
-
-    x, y = zip(*featCountsBuckets)
-    x, y = np.log(x), np.log(y)
-
-
-    fig, ax = preparePlot(np.arange(0, 10, 1), np.arange(4, 14, 2))
-    ax.set_xlabel(r'$\log_e(bucketSize)$'), ax.set_ylabel(r'$\log_e(countInBucket)$')
-    plt.scatter(x, y, s=14**2, c='#d6ebf2', edgecolors='#8cbfd0', alpha=0.75)
-    plt.savefig('preparePlot.png')
-
-
-    OHEValidationData = rawValidationData.map(lambda point: parseOHEPoint(point, ctrOHEDict, numCtrOHEFeats))
-    OHEValidationData.cache()
-
-    numIters = 50
-    stepSize = 10.
-    regParam = 1e-6
-    regType = 'l2'
-    includeIntercept = True
-
-    model0 =  LogisticRegressionWithSGD.train(OHETrainData,iterations=numIters,step=stepSize,regParam=regParam,
-                                  regType=regType,intercept=includeIntercept)
-    print("----------------------LogisticRegressionWithSGD was finished!----------------------")
-    sortedWeights = sorted(model0.weights)
-
-    # print computeLogLoss(.5, 1)
-
-    classOneFracTrain = OHETrainData.map(lambda lp: lp.label).mean()
-    logLossTrBase = OHETrainData.map(lambda lp: computeLogLoss(classOneFracTrain, lp.label)).mean()
-
-    print ('Baseline Train Logloss = {0:.3f}\n'.format(logLossTrBase))
-
-    trainingPredictions = OHETrainData.map(lambda x: getP(x.features, model0.weights, model0.intercept))
-
-    logLossTrLR0 = evaluateResults(model0, OHETrainData)
-
-    print ('OHE Features Train Logloss:\n\tBaseline = {0:.3f}\n\tLogReg = {1:.3f}'
-       .format(logLossTrBase, logLossTrLR0))
+    print("----------------------OHETrainData cache was finished----------------------")
     
+    # # Check that oneHotEncoding function was used in parseOHEPoint
+    # backupOneHot = oneHotEncoding
+    # oneHotEncoding = None
+    # withOneHot = False
+    # try: parseOHEPoint(rawTrainData.take(1)[0], ctrOHEDict, numCtrOHEFeats)
+    # except TypeError: withOneHot = True
+    # oneHotEncoding = backupOneHot
+
+
+    # numNZ = sum(parsedTrainFeat.map(lambda x: len(x)).take(5))
+    # numNZAlt = sum(OHETrainData.map(lambda lp: len(lp.features.indices)).take(5))
+
+    # featCounts = (OHETrainData
+    #           .flatMap(lambda lp: lp.features.indices)
+    #           .map(lambda x: (x, 1))
+    #           .reduceByKey(lambda x, y: x + y))
+
+    # featCountsBuckets = (featCounts
+    #                  .map(lambda x: (bucketFeatByCount(x[1]), 1))
+    #                  .filter(lambda k, v: k != -1)
+    #                  .reduceByKey(lambda x, y: x + y)
+    #                  .collect())
+
+    # x, y = zip(*featCountsBuckets)
+    # x, y = np.log(x), np.log(y)
+
+
+    # fig, ax = preparePlot(np.arange(0, 10, 1), np.arange(4, 14, 2))
+    # ax.set_xlabel(r'$\log_e(bucketSize)$'), ax.set_ylabel(r'$\log_e(countInBucket)$')
+    # plt.scatter(x, y, s=14**2, c='#d6ebf2', edgecolors='#8cbfd0', alpha=0.75)
+    # plt.savefig('preparePlot.png')
+
+
+    # OHEValidationData = rawValidationData.map(lambda point: parseOHEPoint(point, ctrOHEDict, numCtrOHEFeats))
+    # OHEValidationData.cache()
+
+    # numIters = 50
+    # stepSize = 10.
+    # regParam = 1e-6
+    # regType = 'l2'
+    # includeIntercept = True
+
+    # model0 =  LogisticRegressionWithSGD.train(OHETrainData,iterations=numIters,step=stepSize,regParam=regParam,
+    #                               regType=regType,intercept=includeIntercept)
+    # print("----------------------LogisticRegressionWithSGD was finished!----------------------")
+    # sortedWeights = sorted(model0.weights)
+
+    # # print computeLogLoss(.5, 1)
+
+    # classOneFracTrain = OHETrainData.map(lambda lp: lp.label).mean()
+    # logLossTrBase = OHETrainData.map(lambda lp: computeLogLoss(classOneFracTrain, lp.label)).mean()
+
+    # print ('Baseline Train Logloss = {0:.3f}\n'.format(logLossTrBase))
+
+    # trainingPredictions = OHETrainData.map(lambda x: getP(x.features, model0.weights, model0.intercept))
+
+    # logLossTrLR0 = evaluateResults(model0, OHETrainData)
+
+    # print ('OHE Features Train Logloss:\n\tBaseline = {0:.3f}\n\tLogReg = {1:.3f}'
+    #    .format(logLossTrBase, logLossTrLR0))
+    # 
