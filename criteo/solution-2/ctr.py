@@ -108,7 +108,7 @@ if __name__ == '__main__':
     # sampleOHEData = sampleDataRDD.map(lambda x: oneHotEncoding(x, sampleOHEDictManual, numSampleOHEFeats))
 
     # fileName = "/local/criteo/train.txt"
-    fileName = "/data/scratch/vw/criteo-display-advertising-dataset/train.txt"
+    fileName = "/data/vw/criteo-display-advertising-dataset/train.txt"
     # work with either ',' or '\t' separated data
     rawData = (sc.textFile(fileName, 2).map(lambda x: x.replace('\t', ',')))
     print("----------------------Data was loaded----------------------")
