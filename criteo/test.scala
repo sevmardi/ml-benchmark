@@ -26,8 +26,10 @@ object test {
     // Load training data in LIBSVM format.
     //val train = MLUtils.loadLibSVMFile(sc, "s3n://bidmach/RCV1train6.libsvm", true, 276544, nnodes*4)
     //val test = MLUtils.loadLibSVMFile(sc, "s3n://bidmach/RCV1test6.libsvm", true, 276544, nnodes*4)
-    val train = MLUtils.loadLibSVMFile(sc, "/local/xaa", 262165, 1)
-    val test = MLUtils.loadLibSVMFile(sc, "/local/xab", 262165, 1)
+    // val train = MLUtils.loadLibSVMFile(sc, "/local/train", 262165, 1)
+    val train = MLUtils.loadLibSVMFile(sc, "/data/vw/criteo-display-advertising-dataset/train")
+    // val test = MLUtils.loadLibSVMFile(sc, "/data/vw/criteo-display-advertising-dataset//test", 262165, 1)
+    val test = MLUtils.loadLibSVMFile(sc, "/data/vw/criteo-display-advertising-dataset/test")
     train.coalesce(1)
 
     //262146

@@ -14,7 +14,7 @@ for key in range(15,40):
 	prev=  offset[key]
 
 #take the train set as CLI argument 
-fname = sys.argv[1]
+fname = sys.argv[1] #/data/vw/criteo-display-advertising-dataset/train.txt"
 output = sys.argv[2] #the output file e.g. output.svm
 
 
