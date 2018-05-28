@@ -160,17 +160,17 @@ if __name__ == '__main__':
               .flatMap(lambda lp: lp.features.indices)
               .map(lambda x: (x, 1))
               .reduceByKey(lambda x, y: x + y))
+    print("----------------------featCountswas finished----------------------")
+    # featCountsBuckets = (featCounts
+    #                  .map(lambda x: (bucketFeatByCount(x[1]), 1))
+    #                  .filter(lambda k, v: k != -1)
+    #                  .reduceByKey(lambda x, y: x + y)
+    #                  .collect())
 
-    featCountsBuckets = (featCounts
-                     .map(lambda x: (bucketFeatByCount(x[1]), 1))
-                     .filter(lambda k, v: k != -1)
-                     .reduceByKey(lambda x, y: x + y)
-                     .collect())
+    # x, y = zip(*featCountsBuckets)
+    # x, y = np.log(x), np.log(y)
 
-    x, y = zip(*featCountsBuckets)
-    x, y = np.log(x), np.log(y)
-
-    print("-------------------------------Feat Count buckts was finished!")
+    # print("-------------------------------Feat Count buckts was finished!")
     
 
 
