@@ -240,7 +240,12 @@ sampleOHEData = sampleDataRDD.map(lambda x : oneHotEncoding(x, sampleOHEDictManu
 # ### ** Part 2: Construct an OHE dictionary **
 
 # #### **(2a) Pair RDD of `(featureID, category)` **
-# #### To start, create an RDD of distinct `(featureID, category)` tuples. In our sample dataset, the 7 items in the resulting RDD are `(0, 'bear')`, `(0, 'cat')`, `(0, 'mouse')`, `(1, 'black')`, `(1, 'tabby')`, `(2, 'mouse')`, `(2, 'salmon')`. Notably `'black'` appears twice in the dataset but only contributes one item to the RDD: `(1, 'black')`, while `'mouse'` also appears twice and contributes two items: `(0, 'mouse')` and `(2, 'mouse')`.  Use [flatMap](https://spark.apache.org/docs/latest/api/python/pyspark.html#pyspark.RDD.flatMap) and [distinct](https://spark.apache.org/docs/latest/api/python/pyspark.html#pyspark.RDD.distinct).
+# #### To start, create an RDD of distinct `(featureID, category)` tuples. In our sample dataset, 
+# the 7 items in the resulting RDD are `(0, 'bear')`, `(0, 'cat')`, `(0, 'mouse')`, `(1, 'black')`, `(1, 'tabby')`, `(2, 'mouse')`, `(2, 'salmon')`.
+# Notably `'black'` appears twice in the dataset but only contributes one item to the RDD: `(1, 'black')`, while `'mouse'` also appears twice and contributes two items: `(0, 'mouse')` 
+# and `(2, 'mouse')`.  
+#Use [flatMap](https://spark.apache.org/docs/latest/api/python/pyspark.html#pyspark.RDD.flatMap) 
+#and [distinct](https://spark.apache.org/docs/latest/api/python/pyspark.html#pyspark.RDD.distinct).
 
 # In[15]:
 
@@ -616,7 +621,10 @@ plt.savefig('foo.png')
 
 
 # #### **(3e) Handling unseen features **
-# #### We naturally would like to repeat the process from Part (3d), e.g., to compute OHE features for the validation and test datasets.  However, we must be careful, as some categorical values will likely appear in new data that did not exist in the training data. To deal with this situation, update the `oneHotEncoding()` function from Part (1d) to ignore previously unseen categories, and then compute OHE features for the validation data.
+# #### We naturally would like to repeat the process from Part (3d).
+# e.g., to compute OHE features for the validation and test datasets.  
+#However, we must be careful, as some categorical values will likely appear in new data that did not exist in the training data. 
+#To deal with this situation, update the `oneHotEncoding()` function from Part (1d) to ignore previously unseen categories, and then compute OHE features for the validation data.
 
 # In[40]:
 
@@ -901,8 +909,13 @@ plt.savefig('foo2.png')
 # ### **Part 5: Reduce feature dimension via feature hashing**
 
 # #### ** (5a) Hash function **
-# #### As we just saw, using a one-hot-encoding featurization can yield a model with good statistical accuracy.  However, the number of distinct categories across all features is quite large -- recall that we observed 233K categories in the training data in Part (3c).  Moreover, the full Kaggle training dataset includes more than 33M distinct categories, and the Kaggle dataset itself is just a small subset of Criteo's labeled data.  Hence, featurizing via a one-hot-encoding representation would lead to a very large feature vector. To reduce the dimensionality of the feature space, we will use feature hashing.
-# ####Below is the hash function that we will use for this part of the lab.  We will first use this hash function with the three sample data points from Part (1a) to gain some intuition.  Specifically, run code to hash the three sample points using two different values for `numBuckets` and observe the resulting hashed feature dictionaries.
+# #### As we just saw, using a one-hot-encoding featurization can yield a model with good statistical accuracy. 
+# However, the number of distinct categories across all features is quite large -- 
+# recall that we observed 233K categories in the training data in Part (3c).  Moreover, the full Kaggle training dataset includes more than 33M distinct categories, 
+# and the Kaggle dataset itself is just a small subset of Criteo's labeled data.  
+# Hence, featurizing via a one-hot-encoding representation would lead to a very large feature vector. 
+# To reduce the dimensionality of the feature space, we will use feature hashing.
+# Below is the hash function that we will use for this part of the lab.  We will first use this hash function with the three sample data points from Part (1a) to gain some intuition.  Specifically, run code to hash the three sample points using two different values for `numBuckets` and observe the resulting hashed feature dictionaries.
 
 # In[57]:
 

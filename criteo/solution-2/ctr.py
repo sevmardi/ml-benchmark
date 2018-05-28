@@ -145,30 +145,33 @@ if __name__ == '__main__':
     print("----------------------OHETrainData cache was finished----------------------")
     
     # # Check that oneHotEncoding function was used in parseOHEPoint
-    # backupOneHot = oneHotEncoding
-    # oneHotEncoding = None
-    # withOneHot = False
-    # try: parseOHEPoint(rawTrainData.take(1)[0], ctrOHEDict, numCtrOHEFeats)
-    # except TypeError: withOneHot = True
-    # oneHotEncoding = backupOneHot
+    backupOneHot = oneHotEncoding
+    oneHotEncoding = None
+    withOneHot = False
+    try: parseOHEPoint(rawTrainData.take(1)[0], ctrOHEDict, numCtrOHEFeats)
+    except TypeError: withOneHot = True
+    oneHotEncoding = backupOneHot
 
 
-    # numNZ = sum(parsedTrainFeat.map(lambda x: len(x)).take(5))
-    # numNZAlt = sum(OHETrainData.map(lambda lp: len(lp.features.indices)).take(5))
+    numNZ = sum(parsedTrainFeat.map(lambda x: len(x)).take(5))
+    numNZAlt = sum(OHETrainData.map(lambda lp: len(lp.features.indices)).take(5))
 
-    # featCounts = (OHETrainData
-    #           .flatMap(lambda lp: lp.features.indices)
-    #           .map(lambda x: (x, 1))
-    #           .reduceByKey(lambda x, y: x + y))
+    featCounts = (OHETrainData
+              .flatMap(lambda lp: lp.features.indices)
+              .map(lambda x: (x, 1))
+              .reduceByKey(lambda x, y: x + y))
 
-    # featCountsBuckets = (featCounts
-    #                  .map(lambda x: (bucketFeatByCount(x[1]), 1))
-    #                  .filter(lambda k, v: k != -1)
-    #                  .reduceByKey(lambda x, y: x + y)
-    #                  .collect())
+    featCountsBuckets = (featCounts
+                     .map(lambda x: (bucketFeatByCount(x[1]), 1))
+                     .filter(lambda k, v: k != -1)
+                     .reduceByKey(lambda x, y: x + y)
+                     .collect())
 
-    # x, y = zip(*featCountsBuckets)
-    # x, y = np.log(x), np.log(y)
+    x, y = zip(*featCountsBuckets)
+    x, y = np.log(x), np.log(y)
+
+    print("-------------------------------Feat Count buckts was finished!")
+    
 
 
     # fig, ax = preparePlot(np.arange(0, 10, 1), np.arange(4, 14, 2))
