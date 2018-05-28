@@ -55,7 +55,7 @@ def oneHotEncoding(rawFeats, OHEDict, numOHEFeats):
 
 def preparePlot(xticks, yticks, figsize=(10.5, 6), hideLabels=False, gridColor='#999999',
                 gridWidth=1.0):
-    plt.close()
+    # plt.close()
     fig, ax = plt.subplots(figsize=figsize, facecolor='white', edgecolor='white')
     ax.axes.tick_params(labelcolor='#999999', labelsize='10')
     for axis, ticks in [(ax.get_xaxis(), xticks), (ax.get_yaxis(), yticks)]:
@@ -172,11 +172,11 @@ if __name__ == '__main__':
 
     print("-------------------------------featCountsBuckets buckts was finished!----------------------")
 
-    fig, ax = preparePlot(np.arange(0, 10, 1), np.arange(4, 14, 2))
-    ax.set_xlabel(r'$\log_e(bucketSize)$'), ax.set_ylabel(r'$\log_e(countInBucket)$')
-    plt.scatter(x, y, s=14**2, c='#d6ebf2', edgecolors='#8cbfd0', alpha=0.75)
-    plt.savefig('preparePlot.png')
-    print("-------------------------------preparePlot created!----------------------")
+    # fig, ax = preparePlot(np.arange(0, 10, 1), np.arange(4, 14, 2))
+    # ax.set_xlabel(r'$\log_e(bucketSize)$'), ax.set_ylabel(r'$\log_e(countInBucket)$')
+    # plt.scatter(x, y, s=14**2, c='#d6ebf2', edgecolors='#8cbfd0', alpha=0.75)
+    # plt.savefig('preparePlot.png')
+    # print("-------------------------------preparePlot created!----------------------")
 
     # OHEValidationData = rawValidationData.map(lambda point: parseOHEPoint(point, ctrOHEDict, numCtrOHEFeats))
     # OHEValidationData.cache()
