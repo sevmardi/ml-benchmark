@@ -160,25 +160,23 @@ if __name__ == '__main__':
               .flatMap(lambda lp: lp.features.indices)
               .map(lambda x: (x, 1))
               .reduceByKey(lambda x, y: x + y))
-    print("----------------------featCountswas finished----------------------")
-    # featCountsBuckets = (featCounts
-    #                  .map(lambda x: (bucketFeatByCount(x[1]), 1))
-    #                  .filter(lambda k, v: k != -1)
-    #                  .reduceByKey(lambda x, y: x + y)
-    #                  .collect())
+    print("----------------------featCounts finished----------------------")
+    featCountsBuckets = (featCounts
+                     .map(lambda x: (bucketFeatByCount(x[1]), 1))
+                     .filter(lambda k, v: k != -1)
+                     .reduceByKey(lambda x, y: x + y)
+                     .collect())
 
-    # x, y = zip(*featCountsBuckets)
-    # x, y = np.log(x), np.log(y)
+    x, y = zip(*featCountsBuckets)
+    x, y = np.log(x), np.log(y)
 
-    # print("-------------------------------Feat Count buckts was finished!")
+    print("-------------------------------featCountsBuckets buckts was finished!----------------------")
 
-
-
-    # fig, ax = preparePlot(np.arange(0, 10, 1), np.arange(4, 14, 2))
-    # ax.set_xlabel(r'$\log_e(bucketSize)$'), ax.set_ylabel(r'$\log_e(countInBucket)$')
-    # plt.scatter(x, y, s=14**2, c='#d6ebf2', edgecolors='#8cbfd0', alpha=0.75)
-    # plt.savefig('preparePlot.png')
-
+    fig, ax = preparePlot(np.arange(0, 10, 1), np.arange(4, 14, 2))
+    ax.set_xlabel(r'$\log_e(bucketSize)$'), ax.set_ylabel(r'$\log_e(countInBucket)$')
+    plt.scatter(x, y, s=14**2, c='#d6ebf2', edgecolors='#8cbfd0', alpha=0.75)
+    plt.savefig('preparePlot.png')
+    print("-------------------------------preparePlot created!----------------------")
 
     # OHEValidationData = rawValidationData.map(lambda point: parseOHEPoint(point, ctrOHEDict, numCtrOHEFeats))
     # OHEValidationData.cache()
