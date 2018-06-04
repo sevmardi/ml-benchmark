@@ -16,10 +16,10 @@ object test {
 
   def main(args: Array[String]) {
 
-    val nnodes = 1
-    val epochs = 3
+    val nnodes = 16
+    val epochs = 10
 
-    val conf = new SparkConf().setAppName("Test Name")
+    val conf = new SparkConf().setAppName("criteo click")
     val sc = new SparkContext(conf)
 
     val t0 = currentTime
