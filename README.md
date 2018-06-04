@@ -12,8 +12,8 @@ Coming soon!
 ## Dependencies
 
 ## References/Inspiration
- ![benchm-ml](https://github.com/szilard/benchm-ml)
-![riteo-1tb-benchmark] (https://github.com/rambler-digital-solutions/criteo-1tb-benchmark)
+![benchm-ml](https://github.com/szilard/benchm-ml)
+![riteo-1tb-benchmark](https://github.com/rambler-digital-solutions/criteo-1tb-benchmark)
 
 ## Copyright
 See [LICENSE](LICENSE) for details.
