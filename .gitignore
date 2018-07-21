@@ -105,3 +105,4 @@ ENV/
 *.xml
 *.iml
 .idea
+netflix/data/*
