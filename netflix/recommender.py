@@ -45,7 +45,8 @@ class NetflixRecommender:
 
     def __init__(self, sc):
         
-        dataset = os.path.join('.', '~/Documents/netflix/download')
+        dataset = os.path.join('.', 'data/netflix')
+        # dataset = os.path.join('.', '/data/scratch/vw/netflix')
         self.sc = sc
 
         print("\n\n ** loading ratings... **\n\n")

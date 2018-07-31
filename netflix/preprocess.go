@@ -9,13 +9,13 @@ import (
 
 func main() {
 	//read the folder
-	files, err := ioutil.ReadDir("training_set")
+	files, err := ioutil.ReadDir("data/netflix/training_set")
 	if err != nil {
 		log.Fatal(err)
 		panic(err)
 	}
 	// save the output to a file
-	fout, err := os.Create("netflix_training_merged")
+	fout, err := os.Create("data/netflix/netflix_training_merged")
 	if err != nil {
 		log.Fatal(err)
 		panic(err)
@@ -24,7 +24,7 @@ func main() {
 	defer fout.Close()
 	//iterate over every file in the folder..
 	for _, fileName := range files {
-		file, err := os.Open("training_set/" + fileName.Name())
+		file, err := os.Open("data/netflix/training_set/" + fileName.Name())
 		if err != nil {
 			log.Fatal(err)
 			panic(err)
