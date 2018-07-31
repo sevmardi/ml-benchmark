@@ -5,7 +5,7 @@
 
 Experiments using primarily Apache Spark
 
- ![ML-Benchmark](images/ml-benchmark.png)
+ ![ML-Benchmark](images/ML-benchmark.png)
 
 ## Data
 The raw data can be accessed here: http://labs.criteo.com/2013/12/download-terabyte-click-logs/
