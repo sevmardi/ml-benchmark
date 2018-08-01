@@ -1,4 +1,104 @@
-spark
-------
+
 Paper 1711.09279  
 Big Data Analysis Using Spark:
+
+Challengs 
+---------
+The primary purpose of this paper is to efficiently handle data of a large magnitude. Using three different kind of frameworks and built-in libraries individually, existing systems have managed to use our frameworks for such analysis of Big Data. However, there is still scope for exploring new models that yield results with greater accuracies while still using the frameworks to remain computationally feasible. The key questions here are: 
+(1) What is effiecnet way to extract maximum information from the pre-existing features in the dataset to yield optimum accuracy? 
+(2) Which model of the chosen models performs the best in all frameworks?  
+(3) How to incorporate the recent advances made in the field of Artificial 
+Intelligence while still utilizing the best computational power?
+
+Countering the Challenges
+------------------------
+To address the challenges mentioned above, this paper presents an approach with different frameworks that harnesses the power of each and every one of them. 
+
+Structure of the Paper
+-----------------------
+The overall framework presented in this paper aims to
+tackle the aforementioned challenges. The paper is divided
+as follows:
+
+
+RELATED WORK
+------------
+The literature in this area includes work that has been
+done in the fields of big data, Spark, Vowpal Wabbit, Scikit-learn and deep learning in general. We have studied and spent hours studing these literature in order to analyse past work in these areas and understand their limitations in order to setup a framework which is capable of handeling these limitations. The literature survey pertaining to
+this paper has been presented in three parts: (i) Work related
+to Vowpal Wabbit, (ii) Work related Apache Spark, (iii) Work related to Scikit-Learn. 
+
+A) Work Related to Apache Spark
+The architecture and utility of Apache Spark was first
+presented to the community by the authors of [1]. It gives
+a brief overview regarding the programming model, which
+includes RDDs, parallel computing etc. It also introduces a few
+implementations in the environment. In this paper [2] the authors introduce 
+Apache Sparks machine learning library, MLlib. 
+The intro includes its core features as well as the different components constituting
+the MLlib library.  The work done in [3] analyzes Sparks
+primary framework by running a sample ML instance on
+it. The authors present comprehensive results based on their
+evaluations that highlight Sparks advantages. The authors of
+[4] present a similar usage of Spark by analyzing twitter
+data using Sparks framework. The massive size of the twitter
+dataset used highlights the significance of using a tool like
+Spark. The authors of [5] have performed similar twitter
+sentiment analysis using Apache Spark.
+In [6] the authors present BigDL, a distributed deep learning framework for Big Data
+platforms and workflows which is implemented on top of Apache Spark and allows users to write their deep learning applications as standard Spark programs (running directly on large-scale big data clusters in a distributed fashion).
+However, in [7] the paper presents an experimental evaluation of a representative problem for XGBoost,
+LightGBM and Vowpal Wabbit and compare them to Apache Spark MLlib with
+respect to both: runtime and prediction quality. The authors argue that benchmarking of large scale
+ML systems should consider state of the art, single machine libraries as baselines
+and sketch such a benchmark for distributed data flow systems. This paper serves as a good ground to built upon and imporove the results. 
+
+
+
+PROPOSED APPROACH
+-----------------
+
+1- Big Data Analysis Using Spark:
+
+
+
+EXPERIMENTATION
+-----------------
+Using Spark
+
+
+
+
+#ref
+
+[1] M. Zaharia, M. Chowdhury, M. J. Franklin, S. Shenker, and I. Stoica,
+“Spark: Cluster computing with working sets.,” HotCloud, vol. 10,
+no. 10-10, p. 95, 2010.
+
+
+[2] X. Meng, J. Bradley, B. Yavuz, E. Sparks, S. Venkataraman, D. Liu,
+J. Freeman, D. Tsai, M. Amde, S. Owen, et al., “Mllib: Machine learning
+in apache spark,” Journal of Machine Learning Research, vol. 17, no. 34,
+pp. 1–7, 2016.
+
+
+[3] J. Fu, J. Sun, and K. Wang, “Spark–a big data processing platform for
+machine learning,” in Industrial Informatics-Computing Technology, In-
+telligent Technology, Industrial Information Integration (ICIICII), 2016
+International Conference on, pp. 48–51, IEEE, 2016.
+
+[4] L. R. Nair and S. D. Shetty, “Streaming twitter data analysis using spark
+for effective job search,” Journal of Theoretical and Applied Information
+Technology, vol. 80, no. 2, p. 349, 2015.
+
+
+[5] N. Nodarakis, S. Sioutas, A. K. Tsakalidis, and G. Tzimas, “Large scale
+sentiment analysis on twitter with spark.,” in EDBT/ICDT Workshops,
+pp. 1–8, 2016.
+
+
+[6] BigDL: A Distributed Deep Learning
+Framework for Big Data
+
+
+[7] Distributed Machine Learning - but at what COST?
