@@ -106,3 +106,5 @@ ENV/
 *.iml
 .idea
 netflix/dataset/*
+github/*
+*.git

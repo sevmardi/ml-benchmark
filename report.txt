@@ -70,18 +70,50 @@ binary class.
 
 Apache Spark
 -------------
-is is a distributed dataflow system for large-scale data processing originally cantered around the concept of data-parallel transformations on Resilient Distributed Datasets (RDDs)[8]: read-only collections of data partitioned across nodes, which can be cached and recomputed in case of node failures, to support the efficient execution of iterative algorithms. It is one of the most popular open source systems for big data analytics and ships with the scalable machine learning library MLlib. The primary Machine Learning API for Spark since Version 2.0 is the DataFrame-based API, which
-leverages Tungsten’s fast in-memory encoding and code generation. We use Spark and MLlib version 2.2.0 and the aforementioned API (spark.ml) for all of our Spark experiments in our experiments.
+is is a distributed dataflow system for large-scale data processing originally cantered around the concept of data-parallel 
+transformations on Resilient Distributed Datasets (RDDs)[8]: 
+read-only collections of data partitioned across nodes, 
+which can be cached and recomputed in case of node failures, to support the efficient execution of iterative algorithms. RDD are in-memory storage abstraction, which is an
+immutable collection of Python or Scala/Java objects partitioned across a cluster, and can be transformed to derive new RDDs through data-parallel functional operators like map, 
+filter and reduce. Consequently, users can efficiently load very large dataset and process the loaded data in a
+distributed fashion using Spark, and then feed the processed data into the analytics and AI pipeline.For
+example, lines 1 ~ 6 in Figure 1 illustrates how to load the input data (article texts and their associated
+labels) from the Hadoop Distributed File System (HDFS) [20], and transforms each text string into a
+list of words.
 
-Parameter Tuning: Is a crucial pat of applying machine learning methods and can have a significant impact on algorithms performance. In order to strive for a fair comparison in our experiments we allotted a fixed and identical timeframe for tuning the parameters to all systems and libraries, honouring the fact practitioners also face tight deadlines when performing hyper-parameter tuning and may not have the time for exhaustive search of a global optimum [9]. We built all three libraries
+Other than that, one of the most popular open source systems for big data analytics and ships with the scalable machine learning library MLlib. 
+The primary Machine Learning API for Spark since Version 2.0 is the DataFrame-based API, which leverages Tungsten’s fast in-memory encoding and code generation. 
+We use Spark and MLlib version 2.2.0 and the aforementioned API (spark.ml) for all of our Spark experiments in our experiments.
+
+
+
+
+Data transformation
+-------------
+Spark supports general dataflow DAGs [13] by composing multiple data-parallel operators on RDD,
+where each vertex represents an RDD and each edge represents the transformation by the RDD operator.
+By constructing the dataflow DAG in Spark, users can easily transform the input data (for, e.g., image
+augmentations, word vectorizations, etc.), which can then be used by the neural network models. For
+example, lines 7 ~ 11 in Figure 1 illustrates how to apply GloVe word embedding [21] to transform
+each word to a vector.
+
+
+
+
+Parameter Tuning:
+---------------
+Is a crucial pat of applying machine learning methods and can have a significant impact on algorithms performance. In order to strive for a fair comparison in our experiments we allotted a fixed and identical timeframe for tuning the parameters to all systems and libraries, honouring the fact practitioners also face tight deadlines when performing hyper-parameter tuning and may not have the time for exhaustive search of a global optimum [9]. We built all three libraries
 based on their latest available release on github. Apache Spark is fundamentally built to be used on command line and so we did. However, for most of the experiments we wrote Scala/Python based applications to get the job done. Apache Spark MLlib provides a CrossValidator to find the best parameter for a model. Unfortunately we ran into continuous OutOfMemory issues even for data sets several orders of magnitude smaller than the available main memory and thus had to rely on rather coarse grained grid search for the Spark algorithms.
 
 
-Features: Since VW uses feature hashing internally, we implemented the same as a pre-processing step for the Spark version of Logistic regression with the 2^18 = 262144 features, which is the default value for VW and small enough to avoid problems that
+Features: 
+-------------
+Since VW uses feature hashing internally, we implemented the same as a pre-processing step for the Spark version of Logistic regression with the 2^18 = 262144 features, which is the default value for VW and small enough to avoid problems that
 high dimensional vectors have been shown to cause within Apache Spark [10]
 
-
-Measurements: In order to generate plots that illustrate prediction quality over time we used the
+Measurements:
+-------------
+In order to generate plots that illustrate prediction quality over time we used the
 following pragmatic approach: for VW’s SGD we measured training time for different fractions
 of the data set, for Spark LR as well as Scikit-Learn for different numbers of
 iterations. We ran all experiments with and without evaluation and only plotted the time elapsed in
@@ -120,7 +152,6 @@ the needs of the user)
 
 
 
-
 Experiments
 -----------------
 The overall aim of experimentation is to perform a
@@ -130,18 +161,36 @@ for scalable machine learning workloads. We measure training time (including loa
 
 
 Experiment 1: Logistic Regression as a baseline}
-Spark
+------------------------------------------------
+In the first experimnet we look at regularized Logistic regression algorithm, a popular baseline method that can be solved using embarrassingly parallel
+algorithms such as batch gradient descent. Apache Spark MLlib implements Logistic Regression
+training using the Breeze library’s LBFGS solver where it locally computes partial gradient updates in
+parallel using all available cores and and aggregates them in the driver. As a single machine baseline
+we use Vowpal Wabbit which implements an online stochastic gradient decent using only two cores:
+one for parsing the input data and one to compute gradient updates. 
+
+As mentioned before in the cluster hardware subsection, we executed our experiments on the big machines. One with 32 CPUs and 1TB of ram and other with 16 nodes dual quad-core cluster with 48GB RAM in total. 
+For both hardware configurations, the Spark MLlib implementation needs significantly more time to achieve comparable AuC, even though it runs on substantially more resources. 
+One of the advantages of VW as we were able to research this is that it starts immediately updating the model as data is read.
+Spark spends considerable time reading and caching the data, before it can run the
+first L-BFGS iteration.Once this is accomplished, additional iterations run very fast on the cached
+data. For the runs on the DAS4 it takes around 2 to 3 hours using 3 to 4 nodes available. For the runs on single node we observe that Spark MLlib is slower than VW. 
+Increasing number of nodes on DAS4 the performance of Spark MLlib gets within reach of VW's performance on single node.  These experiments show that even for an embarrassingly parallel learning algorithm,
+the latest generation distributed data flows systems such as Spark 2.2.*, which leverages explicit memory management and code-generation to exploit modern compilers and CPUs to obtain optimal performance on the
+jvm, need substantial hardware resources (factor 6-15) to obtain comparable prediction quality with
+a competent single machine implementation within the same timeframe. (Note that since Vowpal
+Wabbit is an out-of-core library both Spark MLLib and VW could be scaled to even larger data set
+sizes.)
 
 
 Experiment 2: Matrix Factorization using Netflix dataset}
+---------------------------------------------------------
 
-\subsubsection{Spark}
+
 
 
 Experiment 3: Linear Support Vector Machine}
-
-Spark
-
+--------------------------------------------
 
 
 
@@ -204,3 +253,6 @@ Beyond, BeyondMR’17, pages 5:1–5:10, New York, NY, USA, 2017. ACM.
 distributed systems and algorithms. In Proceedings of the Ninth TPC Technology Conference
 on Performance Evaluation and Benchmarking (TPCTC 2017) at VLDB 2017, 2017.
 
+
+[13] Matei Zaharia , et al. “Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory
+Cluster Computing”, NSDI 2012.
