@@ -16,7 +16,7 @@ class NetflixRecommender:
 
     def __init__(self, sc):
 
-        dataset = os.path.join('.', '../dataset/netflix')
+        dataset = os.path.join('.', '../dataset/netflix_og')
         # das4 = os.path.join('.', '/data/scratch/vw/netflix')
         # latinum = os.path.join('.', '/data/vw/netflix-prize-dataset')
         self.sc = sc

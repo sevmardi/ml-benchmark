@@ -21,52 +21,6 @@ tackle the aforementioned challenges. The paper is divided
 as follows:
 
 
-RELATED WORK
-------------
-The literature in this area includes work that has been
-done in the fields of big data, Spark, Vowpal Wabbit, Scikit-learn and deep learning in general. We have studied and spent hours studing these literature in order to analyse past work in these areas and understand their limitations in order to setup a framework which is capable of handling these limitations. The literature survey pertaining to
-this paper has been presented in three parts: (i) Work related
-to Vowpal Wabbit, (ii) Work related Apache Spark, (iii) Work related to Scikit-Learn. 
-
-A) Work Related to Apache Spark
-The architecture and utility of Apache Spark was first
-presented to the community by the authors of [1]. It gives
-a brief overview regarding the programming model, which
-includes RDDs, parallel computing etc. It also introduces a few
-implementations in the environment. In this paper [2] the authors introduce 
-Apache Sparks machine learning library, MLlib. 
-The intro includes its core features as well as the different components constituting
-the MLlib library.  The work done in [3] analyses Sparks
-primary framework by running a sample ML instance on
-it. The authors present comprehensive results based on their
-evaluations that highlight Sparks advantages. The authors of
-[4] present a similar usage of Spark by analysing twitter
-data using Sparks framework. The massive size of the twitter
-dataset used highlights the significance of using a tool like
-Spark. The authors of [5] have performed similar twitter
-sentiment analysis using Apache Spark.
-In [6] the authors present BigDL, a distributed deep learning framework for Big Data
-platforms and work flows which is implemented on top of Apache Spark and allows users to write their deep learning applications as standard Spark programs (running directly on large-scale big data clusters in a distributed fashion).
-However, in [7] the paper presents an experimental evaluation of a representative problem for XGBoost, LightGBM and Vowpal Wabbit and compare them to Apache Spark MLlib with
-respect to both: runtime and prediction quality. The authors argue that benchmarking of large scale
-ML systems should consider state of the art, single machine libraries as baselines
-and sketch such a benchmark for distributed data flow systems. This paper serves as a good ground to built upon and improve the results. 
-
-
-PROPOSED APPROACH
------------------
-In this section, we describe in detail the framework we mentioned in this paper. Our approach combines the benefits of using a big data processing framework like VW, Spark and scikit-learn using large datasets.
-
-1- Big Data Analysis Using Spark:
-The various machine learning algorithms on Spark have been studied in depth
-with reference to big data. For the purpose of this research,
-we use the MLLib library of Spark to implement Logistic
-Regression, Matrix Factorization (ALS) and Linear Support Vector Machine
-algorithms. In this stage, the pre-processed dataset is passed
-through these algorithms to create a regression model that
-presents the probability of each data-point belonging to a
-binary class.
-
 
 Apache Spark
 -------------
@@ -86,8 +40,6 @@ The primary Machine Learning API for Spark since Version 2.0 is the DataFrame-ba
 We use Spark and MLlib version 2.2.0 and the aforementioned API (spark.ml) for all of our Spark experiments in our experiments.
 
 
-
-
 Data transformation
 -------------
 Spark supports general dataflow DAGs [13] by composing multiple data-parallel operators on RDD,
@@ -98,8 +50,6 @@ example, lines 7 ~ 11 in Figure 1 illustrates how to apply GloVe word embedding 
 each word to a vector.
 
 
-
-
 Parameter Tuning:
 ---------------
 Is a crucial pat of applying machine learning methods and can have a significant impact on algorithms performance. In order to strive for a fair comparison in our experiments we allotted a fixed and identical timeframe for tuning the parameters to all systems and libraries, honouring the fact practitioners also face tight deadlines when performing hyper-parameter tuning and may not have the time for exhaustive search of a global optimum [9]. We built all three libraries
@@ -107,7 +57,7 @@ based on their latest available release on github. Apache Spark is fundamentally
 
 
 Features: 
--------------
+---------
 Since VW uses feature hashing internally, we implemented the same as a pre-processing step for the Spark version of Logistic regression with the 2^18 = 262144 features, which is the default value for VW and small enough to avoid problems that
 high dimensional vectors have been shown to cause within Apache Spark [10]
 
@@ -121,7 +71,9 @@ the no-evaluation runs. As Spark does not easily allow intermediate evaluation, 
 it with different numbers of iterations from scratch using the PEEL [11, 12] framework.
 
 
-Cluster Hardware: We run our experiments on two different cluster set-ups available in the local
+Cluster Hardware:
+----------------
+We run our experiments on two different cluster set-ups available in the local
 university data center: A Big-Memory one with lots of RAM and and CPUs. Very Powerful for single node computations and lots of threads to accomplish task within great speed. The other one however, a multi-node cluster spcifailly designed for tasks using either Hadoop or Apache Spark
 
 Big-Mem Machine: Big-Memory aka Latinum. This machine has in total of 1.5TB RAM, 16 Intel Xeon CPUs @ 2.40GHz (32 thread) and storage in total of 3TB. 
@@ -129,8 +81,22 @@ Big-Mem Machine: Big-Memory aka Latinum. This machine has in total of 1.5TB RAM,
 Multi-Node Machine:  known as DAS4 - 16 nodes dual quad-core 2.4GHz, 48GB RAM, 50TB in storage and IB and GbE network 
 
 
-Steps of the Framework
--------------
+
+Dataset 
+-------
+Netflix: The dataset contains over 100 million ratings from 480 thousand randomly-chosen, anonymous Netflix customers over 17 thousand movie titles. The chances are that some users didn't rate a rented movie which basically means we will be dealing with quite a large sparse matrix. So the only problem we can have with such a dataset would be its low-density with regard to the users that rate a handful of movies, or the movies that have been rated only a
+few times.
+
+criteo: In order to evaluate a relevant and representative standard problem, we choose to use the Criteo Click Logs \footnote data set. This clickthrough rate (CTR) prediction data set contains feature values and click feedback for millions of display ads drawn from a portion of Criteo’s traffic over a period
+of 24 days. It consists of 13 numeric and 26 categorical features.  In its entirety, the data set spawns
+about 4 billion data points, has a size of 1.5 TB. For some of our experiments we sub-sampled the data such
+that both classes have equal probability, resulting a roughly 270 million data points. We tried to use the first 5 to 10 days of the data. 
+
+[footnote] http://labs.criteo.com/downloads/download-terabyte-click-logs/
+
+
+Steps of the Framework in Spark
+----------------------------------
 
 Big Data Analysis using ML in Spark
 - Input Pre-processed dataset in the form of a RDD
@@ -185,14 +151,55 @@ sizes.)
 
 Experiment 2: Matrix Factorization using Netflix dataset}
 ---------------------------------------------------------
+In the second experiment we used Netflix full dataset [point to section dataset]. In this exerpiment we evaluate Matrix Factorization such as either a batch version (also known as Alternating Least Squares) 
+and an SGD implementation. 
+
+Alternating Least Sequares with Spark MLlib:
+--------------------------------------------
+As mentioned before Spark's MLlib has the majority of all ML algorithms already implmented. One of the MLlib's algorithms is Collaborative Filtering which is 
+an RDD based API. Collaborative filtering is commonly used for recommender systems. These techniques aim to fill in the missing entries of a user-item association matrix. 
+spark.mllib currently supports model-based collaborative filtering, in which users and products are described by a small set of latent factors that can be used to predict missing entries.
+spark.mllib uses the alternating least squares (ALS) algorithm to learn these latent factors. We trained our model with ALS. After testing our model with different values and regularzing parameter
+and number of features, we achieved an RMSE of 0.99532 on the testing set with k = 3 as the number of features and lambda=0.09. The ALS model in Spark has limitions such as not allowing to set a 
+different different regularizer value to the user and the item. The same lambda (symbol here) is applied in both regressions. Therefore it limits the possible range of optimization that we could reach to
+minimize the RMSE. 
+
+The figures 1 below show the RMSE in function of lambda for
+k ∈ {3, 5, 7, 8}. As we can see, the smaller RMSE is obtained
+with k = 3 and lambda = 0.08.
+
+
+During our research we learned [14] we could implement ALS with missing values. 
+At this point it started converging way faster and possbily 
+much accurate compared to the privious try-outs. We also observed that low number of features
+gives us the best possible score which is in
+accordance with the method itself, since we aim to update the
+items matrix W and the user matrix Z always one after the
+other. So in between runs, each matrix update will be used in
+order to compute the update of the other. The beauty of this
+is that we sacrifice precision for a huge gain in computational
+cost. And the best Root-Mean Squared error that we obtained
+on our testing set was around 0.9798, while our best Kaggle
+score was 0.98916, which was a decent score. The aim here was to compete against one framework to
+another in order to get the best score.
+
+
+Stochastic Gradient Descent:
+-----------------------------
+The other possibility is to
+minimize this cost function using SGD.
+
 
 
 
 
 Experiment 3: Linear Support Vector Machine}
 --------------------------------------------
+The thrid and final experiment is using Linear SVM. 
+The linear SVM is a standard method for large-scale classification tasks. It is a linear method as described above in equation (1), 
+with the loss function in the formulation given by the hinge loss:
 
-
+By default, linear SVMs are trained with an L2 regularization. 
 
 
 
@@ -256,3 +263,6 @@ on Performance Evaluation and Benchmarking (TPCTC 2017) at VLDB 2017, 2017.
 
 [13] Matei Zaharia , et al. “Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory
 Cluster Computing”, NSDI 2012.
+
+
+[14] 
