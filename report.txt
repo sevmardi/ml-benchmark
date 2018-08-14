@@ -58,8 +58,8 @@ based on their latest available release on github. Apache Spark is fundamentally
 
 Features: 
 ---------
-Since VW uses feature hashing internally, we implemented the same as a pre-processing step for the Spark version of Logistic regression with the 2^18 = 262144 features, which is the default value for VW and small enough to avoid problems that
-high dimensional vectors have been shown to cause within Apache Spark [10]
+Since VW uses feature hashing internally, we implemented the same as a pre-processing step for the Spark version of Logistic regression with the \(2^18 = 262144\) features, which is the default value for VW and small enough to avoid problems that high dimensional vectors have been shown to cause within Apache Spark [10]. 
+
 
 Measurements:
 -------------
@@ -76,7 +76,7 @@ Cluster Hardware:
 We run our experiments on two different cluster set-ups available in the local
 university data center: A Big-Memory one with lots of RAM and and CPUs. Very Powerful for single node computations and lots of threads to accomplish task within great speed. The other one however, a multi-node cluster spcifailly designed for tasks using either Hadoop or Apache Spark
 
-Big-Mem Machine: Big-Memory aka Latinum. This machine has in total of 1.5TB RAM, 16 Intel Xeon CPUs @ 2.40GHz (32 thread) and storage in total of 3TB. 
+Big-Mem Machine: Big-Memory aka Latinum. This machine has in total of 1.5TB RAM, 16 Intel Xeon CPUs @ 2.40GHz (32 thread/cores) and storage in total of 3TB. 
 
 Multi-Node Machine:  known as DAS4 - 16 nodes dual quad-core 2.4GHz, 48GB RAM, 50TB in storage and IB and GbE network 
 
@@ -87,8 +87,7 @@ Dataset
 Netflix: The dataset contains over 100 million ratings from 480 thousand randomly-chosen, anonymous Netflix customers over 17 thousand movie titles. The chances are that some users didn't rate a rented movie which basically means we will be dealing with quite a large sparse matrix. So the only problem we can have with such a dataset would be its low-density with regard to the users that rate a handful of movies, or the movies that have been rated only a
 few times.
 
-criteo: In order to evaluate a relevant and representative standard problem, we choose to use the Criteo Click Logs \footnote data set. This clickthrough rate (CTR) prediction data set contains feature values and click feedback for millions of display ads drawn from a portion of Criteo’s traffic over a period
-of 24 days. It consists of 13 numeric and 26 categorical features.  In its entirety, the data set spawns
+criteo: In order to evaluate a relevant and representative standard problem, we choose to use the Criteo Click Logs \footnote data set. This clickthrough rate (CTR) prediction data set contains feature values and click feedback for millions of display ads drawn from a portion of Criteo’s traffic over a period of 24 days. It consists of 13 numeric and 26 categorical features.  In its entirety, the data set spawns
 about 4 billion data points, has a size of 1.5 TB. For some of our experiments we sub-sampled the data such
 that both classes have equal probability, resulting a roughly 270 million data points. We tried to use the first 5 to 10 days of the data. 
 
@@ -128,7 +127,7 @@ for scalable machine learning workloads. We measure training time (including loa
 
 Experiment 1: Logistic Regression as a baseline}
 ------------------------------------------------
-In the first experimnet we look at regularized Logistic regression algorithm, a popular baseline method that can be solved using embarrassingly parallel
+In the first experimnet we look at regularized Logistic Regression algorithm, a popular baseline method that can be solved using embarrassingly parallel
 algorithms such as batch gradient descent. Apache Spark MLlib implements Logistic Regression
 training using the Breeze library’s LBFGS solver where it locally computes partial gradient updates in
 parallel using all available cores and and aggregates them in the driver. As a single machine baseline
@@ -136,17 +135,20 @@ we use Vowpal Wabbit which implements an online stochastic gradient decent using
 one for parsing the input data and one to compute gradient updates. 
 
 As mentioned before in the cluster hardware subsection, we executed our experiments on the big machines. One with 32 CPUs and 1TB of ram and other with 16 nodes dual quad-core cluster with 48GB RAM in total. 
-For both hardware configurations, the Spark MLlib implementation needs significantly more time to achieve comparable AuC, even though it runs on substantially more resources. 
+
+Logistic regression trained using on DAS4 our Spark solution reached AuC on test set was roughlt between .76 and .82 in around 3000 to 4000 seconds in time.  Apache Spark MLlib needs substantially more hardware resources and somtimes JVM failiers even upon increasing the RAM to around 30 to 40 GB.   
+
+Running LR on Big-Mem Machine it took spark for some reason much more time. This, using all the core/cpu's latinum has to offer and RAM usage around ~100 to 150 GB usage reported.  
+For both hardware configurations, the Spark MLlib implementation needs significantly more time to achieve comparable AuC (VW for example), even though it runs on substantially more resources. 
+
 One of the advantages of VW as we were able to research this is that it starts immediately updating the model as data is read.
 Spark spends considerable time reading and caching the data, before it can run the
 first L-BFGS iteration.Once this is accomplished, additional iterations run very fast on the cached
-data. For the runs on the DAS4 it takes around 2 to 3 hours using 3 to 4 nodes available. For the runs on single node we observe that Spark MLlib is slower than VW. 
-Increasing number of nodes on DAS4 the performance of Spark MLlib gets within reach of VW's performance on single node.  These experiments show that even for an embarrassingly parallel learning algorithm,
-the latest generation distributed data flows systems such as Spark 2.2.*, which leverages explicit memory management and code-generation to exploit modern compilers and CPUs to obtain optimal performance on the
-jvm, need substantial hardware resources (factor 6-15) to obtain comparable prediction quality with
-a competent single machine implementation within the same timeframe. (Note that since Vowpal
-Wabbit is an out-of-core library both Spark MLLib and VW could be scaled to even larger data set
-sizes.)
+data. For the runs on the DAS4 it takes around 2 to 3 hours using all the nodes available. For the runs on single node we observe that Spark MLlib is slower than VW. 
+
+Increasing number of nodes on DAS4 the performance of Spark MLlib gets within reach of VW's performance on single node.  These experiments show that even for an embarrassingly parallel learning algorithm,the latest generation distributed data flows systems such as Spark 2.2.*, which leverages explicit memory management and code-generation to exploit modern compilers and CPUs to obtain optimal performance on the jvm, need substantial hardware resources (factor 6-15) to obtain comparable prediction quality with
+a competent single machine implementation within the same timeframe. (Note that since VowpalWabbit is an out-of-core library both Spark MLLib and VW could be scaled to even larger data set
+sizes.).
 
 
 Experiment 2: Matrix Factorization using Netflix dataset}
@@ -193,13 +195,22 @@ minimize this cost function using SGD.
 
 
 
-Experiment 3: Linear Support Vector Machine}
+Experiment 3: Linear Support Vector Machine
 --------------------------------------------
-The thrid and final experiment is using Linear SVM. 
+The thrid and final experiment is using Linear SVM on Spark MLlib.  
 The linear SVM is a standard method for large-scale classification tasks. It is a linear method as described above in equation (1), 
 with the loss function in the formulation given by the hinge loss:
 
-By default, linear SVMs are trained with an L2 regularization. 
+L(w,x,y) := max{0,1 - yW^Tx}
+
+By default, linear SVMs are trained with an L2 regularization. But Apache Spark also supports L1 regularization which in this case the problem becomes more a linear program. The linar SVMs algorithm outputs an SVM model. Given a new data point, denoted by x, the model makes predictions based on the value of w^Tx. By default , if W^T x >= 0 then the outcome is positive, and negative otherwise.
+
+We trained our our on the criteo dataset. Using DAS4 Spark solution reached AuC on test set was roughly between .72 and .76 in around 2500 to 3720 seconds time (we ran different experiments tuning the paramaters in between each experiment also we started with days from 0-3 and building up to day 10)  
+
+On big-mem a.k.a Latinum - the training our program used reached AuC between .73 and .78 in around 3200 seconds using all the cpu resources and ram usage between ~255 to 500 GB 
+
+
+
 
 
 
@@ -211,12 +222,10 @@ By default, linear SVMs are trained with an L2 regularization.
 “Spark: Cluster computing with working sets.,” HotCloud, vol. 10,
 no. 10-10, p. 95, 2010.
 
-
 [2] X. Meng, J. Bradley, B. Yavuz, E. Sparks, S. Venkataraman, D. Liu,
 J. Freeman, D. Tsai, M. Amde, S. Owen, et al., “Mllib: Machine learning
 in apache spark,” Journal of Machine Learning Research, vol. 17, no. 34,
 pp. 1–7, 2016.
-
 
 [3] J. Fu, J. Sun, and K. Wang, “Spark–a big data processing platform for
 machine learning,” in Industrial Informatics-Computing Technology, In-
@@ -226,7 +235,6 @@ International Conference on, pp. 48–51, IEEE, 2016.
 [4] L. R. Nair and S. D. Shetty, “Streaming twitter data analysis using spark
 for effective job search,” Journal of Theoretical and Applied Information
 Technology, vol. 80, no. 2, p. 349, 2015.
-
 
 [5] N. Nodarakis, S. Sioutas, A. K. Tsakalidis, and G. Tzimas, “Large scale
 sentiment analysis on twitter with spark.,” in EDBT/ICDT Workshops,
