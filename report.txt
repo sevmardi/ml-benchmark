@@ -116,6 +116,31 @@ the needs of the user)
 
 
 
+Spark DataFrame and ML Pipeline
+----------------------------------
+Besides RDD, Spark provides a high level DataFrame abstraction [14], which is a distributed collection
+of rows with a specific schema (similar to a table in a relational database), and implements data-parallel
+relational operators like filter and join for efficient structured data analysis. On top of DataFrame, Spark
+introduces a high level ML (machine learning) pipeline [2] similar to SciKit-Learn [15], which allows
+users to construct the machine learning workflow as a graph of transformations on data (e.g., feature
+extraction, normalization, model training, etc.).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Experiments
 -----------------
@@ -197,7 +222,7 @@ minimize this cost function using SGD.
 
 Experiment 3: Linear Support Vector Machine
 --------------------------------------------
-The thrid and final experiment is using Linear SVM on Spark MLlib.  
+The thrid and final experiment is evaulating Linear SVM on Spark MLlib.  
 The linear SVM is a standard method for large-scale classification tasks. It is a linear method as described above in equation (1), 
 with the loss function in the formulation given by the hinge loss:
 
@@ -207,7 +232,9 @@ By default, linear SVMs are trained with an L2 regularization. But Apache Spark 
 
 We trained our our on the criteo dataset. Using DAS4 Spark solution reached AuC on test set was roughly between .72 and .76 in around 2500 to 3720 seconds time (we ran different experiments tuning the paramaters in between each experiment also we started with days from 0-3 and building up to day 10)  
 
-On big-mem a.k.a Latinum - the training our program used reached AuC between .73 and .78 in around 3200 seconds using all the cpu resources and ram usage between ~255 to 500 GB 
+On big-mem a.k.a Latinum - the training of our program reached AuC between .73 and .78 in around 3200 seconds using all the cpu resources and ram usage between ~255 to 500 GB. This was surprisingly slower than expected, given this machine has - in terms of hardware resouces much more to offer than others. 
+
+
 
 
 
@@ -273,4 +300,6 @@ on Performance Evaluation and Benchmarking (TPCTC 2017) at VLDB 2017, 2017.
 Cluster Computing”, NSDI 2012.
 
 
-[14] 
+[14]  Michael Armbrust, et al. “Spark SQL: Relational Data Processing in Spark”, SIGMOD 2015.
+
+[15] SciKit-Learn. http://scikit-learn.org/stable/
