@@ -1,64 +1,6 @@
 
-Paper 1711.09279  
-Big Data Analysis Using Spark:
-
-Challengs 
----------
-The primary purpose of this paper is to efficiently handle data of a large magnitude. Using three different kind of frameworks and built-in libraries individually, existing systems have managed to use our frameworks for such analysis of Big Data. However, there is still scope for exploring new models that yield results with greater accuracies while still using the frameworks to remain computationally feasible. The key questions here are: 
-(1) What is efficient way to extract maximum information from the pre-existing features in the dataset to yield optimum accuracy? 
-(2) Which model of the chosen models performs the best in all frameworks?  
-(3) How to incorporate the recent advances made in the field of Artificial 
-Intelligence while still utilizing the best computational power?
-
-Countering the Challenges
-------------------------
-To address the challenges mentioned above, this paper presents an approach with different frameworks that harnesses the power of each and every one of them. 
-
-Structure of the Paper
------------------------
-The overall framework presented in this paper aims to
-tackle the aforementioned challenges. The paper is divided
-as follows:
 
 
-
-Apache Spark
--------------
-is is a distributed dataflow system for large-scale data processing originally cantered around the concept of data-parallel 
-transformations on Resilient Distributed Datasets (RDDs)[8]: 
-read-only collections of data partitioned across nodes, 
-which can be cached and recomputed in case of node failures, to support the efficient execution of iterative algorithms. RDD are in-memory storage abstraction, which is an
-immutable collection of Python or Scala/Java objects partitioned across a cluster, and can be transformed to derive new RDDs through data-parallel functional operators like map, 
-filter and reduce. Consequently, users can efficiently load very large dataset and process the loaded data in a
-distributed fashion using Spark, and then feed the processed data into the analytics and AI pipeline.For
-example, lines 1 ~ 6 in Figure 1 illustrates how to load the input data (article texts and their associated
-labels) from the Hadoop Distributed File System (HDFS) [20], and transforms each text string into a
-list of words.
-
-Other than that, one of the most popular open source systems for big data analytics and ships with the scalable machine learning library MLlib. 
-The primary Machine Learning API for Spark since Version 2.0 is the DataFrame-based API, which leverages Tungsten’s fast in-memory encoding and code generation. 
-We use Spark and MLlib version 2.2.0 and the aforementioned API (spark.ml) for all of our Spark experiments in our experiments.
-
-
-Data transformation
--------------
-Spark supports general dataflow DAGs [13] by composing multiple data-parallel operators on RDD,
-where each vertex represents an RDD and each edge represents the transformation by the RDD operator.
-By constructing the dataflow DAG in Spark, users can easily transform the input data (for, e.g., image
-augmentations, word vectorizations, etc.), which can then be used by the neural network models. For
-example, lines 7 ~ 11 in Figure 1 illustrates how to apply GloVe word embedding [21] to transform
-each word to a vector.
-
-
-Parameter Tuning:
----------------
-Is a crucial pat of applying machine learning methods and can have a significant impact on algorithms performance. In order to strive for a fair comparison in our experiments we allotted a fixed and identical timeframe for tuning the parameters to all systems and libraries, honouring the fact practitioners also face tight deadlines when performing hyper-parameter tuning and may not have the time for exhaustive search of a global optimum [9]. We built all three libraries
-based on their latest available release on github. Apache Spark is fundamentally built to be used on command line and so we did. However, for most of the experiments we wrote Scala/Python based applications to get the job done. Apache Spark MLlib provides a CrossValidator to find the best parameter for a model. Unfortunately we ran into continuous OutOfMemory issues even for data sets several orders of magnitude smaller than the available main memory and thus had to rely on rather coarse grained grid search for the Spark algorithms.
-
-
-Features: 
----------
-Since VW uses feature hashing internally, we implemented the same as a pre-processing step for the Spark version of Logistic regression with the \(2^18 = 262144\) features, which is the default value for VW and small enough to avoid problems that high dimensional vectors have been shown to cause within Apache Spark [10]. 
 
 
 Measurements:
@@ -69,72 +11,6 @@ of the data set, for Spark LR as well as Scikit-Learn for different numbers of
 iterations. We ran all experiments with and without evaluation and only plotted the time elapsed in
 the no-evaluation runs. As Spark does not easily allow intermediate evaluation, we had to re-re run
 it with different numbers of iterations from scratch using the PEEL [11, 12] framework.
-
-
-Cluster Hardware:
-----------------
-We run our experiments on two different cluster set-ups available in the local
-university data center: A Big-Memory one with lots of RAM and and CPUs. Very Powerful for single node computations and lots of threads to accomplish task within great speed. The other one however, a multi-node cluster spcifailly designed for tasks using either Hadoop or Apache Spark
-
-Big-Mem Machine: Big-Memory aka Latinum. This machine has in total of 1.5TB RAM, 16 Intel Xeon CPUs @ 2.40GHz (32 thread/cores) and storage in total of 3TB. 
-
-Multi-Node Machine:  known as DAS4 - 16 nodes dual quad-core 2.4GHz, 48GB RAM, 50TB in storage and IB and GbE network 
-
-
-
-Dataset 
--------
-Netflix: The dataset contains over 100 million ratings from 480 thousand randomly-chosen, anonymous Netflix customers over 17 thousand movie titles. The chances are that some users didn't rate a rented movie which basically means we will be dealing with quite a large sparse matrix. So the only problem we can have with such a dataset would be its low-density with regard to the users that rate a handful of movies, or the movies that have been rated only a
-few times.
-
-criteo: In order to evaluate a relevant and representative standard problem, we choose to use the Criteo Click Logs \footnote data set. This clickthrough rate (CTR) prediction data set contains feature values and click feedback for millions of display ads drawn from a portion of Criteo’s traffic over a period of 24 days. It consists of 13 numeric and 26 categorical features.  In its entirety, the data set spawns
-about 4 billion data points, has a size of 1.5 TB. For some of our experiments we sub-sampled the data such
-that both classes have equal probability, resulting a roughly 270 million data points. We tried to use the first 5 to 10 days of the data. 
-
-[footnote] http://labs.criteo.com/downloads/download-terabyte-click-logs/
-
-
-Steps of the Framework in Spark
-----------------------------------
-
-Big Data Analysis using ML in Spark
-- Input Pre-processed dataset in the form of a RDD
-- Convert RDD to DataFrame (DF)
-- Read Features and Labels from DF
-- One Hot Encoding of the non-numeric features
-- String Indexing of each encoded feature
-- Vector assembly of one-hot-encoded features and nu-
-meric features
-- Convert the assembled vector into a Pipeline
-- Fit and Transform the Pipeline into a suitable form for
-Spark to read
-- Train the model using MLLib based features using the
-training data
-- Test on the whole data to obtain a binary prediction value
-of the label (the prediction can be defined according to
-the needs of the user)
-
-
-
-Spark DataFrame and ML Pipeline
-----------------------------------
-Besides RDD, Spark provides a high level DataFrame abstraction [14], which is a distributed collection
-of rows with a specific schema (similar to a table in a relational database), and implements data-parallel
-relational operators like filter and join for efficient structured data analysis. On top of DataFrame, Spark
-introduces a high level ML (machine learning) pipeline [2] similar to SciKit-Learn [15], which allows
-users to construct the machine learning workflow as a graph of transformations on data (e.g., feature
-extraction, normalization, model training, etc.).
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -152,28 +28,24 @@ for scalable machine learning workloads. We measure training time (including loa
 
 Experiment 1: Logistic Regression as a baseline}
 ------------------------------------------------
-In the first experimnet we look at regularized Logistic Regression algorithm, a popular baseline method that can be solved using embarrassingly parallel
+In the first experiment we look at regularized Logistic Regression algorithm, a popular baseline method that can be solved using embarrassingly parallel
 algorithms such as batch gradient descent. Apache Spark MLlib implements Logistic Regression
-training using the Breeze library’s LBFGS solver where it locally computes partial gradient updates in
-parallel using all available cores and and aggregates them in the driver. As a single machine baseline
-we use Vowpal Wabbit which implements an online stochastic gradient decent using only two cores:
-one for parsing the input data and one to compute gradient updates. 
+training using the Breeze library’s LBFGS solver where it locally computes partial gradient updates in parallel using all available cores and and aggregates them in the driver. As a single machine baseline we use Vowpal Wabbit which implements an online stochastic gradient decent using only two cores: one for parsing the input data and one to compute gradient updates. 
 
 As mentioned before in the cluster hardware subsection, we executed our experiments on the big machines. One with 32 CPUs and 1TB of ram and other with 16 nodes dual quad-core cluster with 48GB RAM in total. 
 
-Logistic regression trained using on DAS4 our Spark solution reached AuC on test set was roughlt between .76 and .82 in around 3000 to 4000 seconds in time.  Apache Spark MLlib needs substantially more hardware resources and somtimes JVM failiers even upon increasing the RAM to around 30 to 40 GB.   
+Logistic regression was trained on DAS4 using our Spark solution reached AuC (test set) roughly between .76 and .82 in around 3000 to 4000 seconds in time. Apache Spark MLlib needs substantially more hardware resources and sometimes JVM failures even upon increasing the RAM to around 30 to 40 GB.   
 
-Running LR on Big-Mem Machine it took spark for some reason much more time. This, using all the core/cpu's latinum has to offer and RAM usage around ~100 to 150 GB usage reported.  
+Running LR on Big-Mem Machine it took spark for some reason much more time (3550 seconds to 4800 seconds). This, using all the core/cpu's latinum has to offer and RAM usage around ~100 to 150 GB usage reported.  
 For both hardware configurations, the Spark MLlib implementation needs significantly more time to achieve comparable AuC (VW for example), even though it runs on substantially more resources. 
 
-One of the advantages of VW as we were able to research this is that it starts immediately updating the model as data is read.
-Spark spends considerable time reading and caching the data, before it can run the
-first L-BFGS iteration.Once this is accomplished, additional iterations run very fast on the cached
-data. For the runs on the DAS4 it takes around 2 to 3 hours using all the nodes available. For the runs on single node we observe that Spark MLlib is slower than VW. 
+One of the advantages of VW as we were able to research this is that it starts immediately updating the model as data is read. Spark spends considerable time reading and caching the data, before it can run the first L-BFGS iteration. Once this is accomplished, additional iterations run very fast on the cached data. For the runs on the DAS4 it takes around 1.5 hours to 3 hours using all the nodes available. For the runs on single node we observe that Spark MLlib is slower than VW. 
 
-Increasing number of nodes on DAS4 the performance of Spark MLlib gets within reach of VW's performance on single node.  These experiments show that even for an embarrassingly parallel learning algorithm,the latest generation distributed data flows systems such as Spark 2.2.*, which leverages explicit memory management and code-generation to exploit modern compilers and CPUs to obtain optimal performance on the jvm, need substantial hardware resources (factor 6-15) to obtain comparable prediction quality with
-a competent single machine implementation within the same timeframe. (Note that since VowpalWabbit is an out-of-core library both Spark MLLib and VW could be scaled to even larger data set
+Increasing number of nodes on DAS4 the performance of Spark MLlib gets within reach of VW's performance on single node.  These experiments show that even for an embarrassingly parallel learning algorithm,the latest generation distributed data flows systems such as Spark 2.2.*, which leverages explicit memory management and code-generation to exploit modern compilers and CPUs to obtain optimal performance on the JVM, need substantial hardware resources (factor 6-15) to obtain comparable prediction quality with a competent single machine implementation within the same time-frame. (Note that since VowpalWabbit is an out-of-core library both Spark MLLib and VW could be scaled to even larger data set
 sizes.).
+
+
+
 
 
 Experiment 2: Matrix Factorization using Netflix dataset}
@@ -245,49 +117,7 @@ On big-mem a.k.a Latinum - the training of our program reached AuC between .73 a
 # References
 -------------
 
-[1] M. Zaharia, M. Chowdhury, M. J. Franklin, S. Shenker, and I. Stoica,
-“Spark: Cluster computing with working sets.,” HotCloud, vol. 10,
-no. 10-10, p. 95, 2010.
 
-[2] X. Meng, J. Bradley, B. Yavuz, E. Sparks, S. Venkataraman, D. Liu,
-J. Freeman, D. Tsai, M. Amde, S. Owen, et al., “Mllib: Machine learning
-in apache spark,” Journal of Machine Learning Research, vol. 17, no. 34,
-pp. 1–7, 2016.
-
-[3] J. Fu, J. Sun, and K. Wang, “Spark–a big data processing platform for
-machine learning,” in Industrial Informatics-Computing Technology, In-
-telligent Technology, Industrial Information Integration (ICIICII), 2016
-International Conference on, pp. 48–51, IEEE, 2016.
-
-[4] L. R. Nair and S. D. Shetty, “Streaming twitter data analysis using spark
-for effective job search,” Journal of Theoretical and Applied Information
-Technology, vol. 80, no. 2, p. 349, 2015.
-
-[5] N. Nodarakis, S. Sioutas, A. K. Tsakalidis, and G. Tzimas, “Large scale
-sentiment analysis on twitter with spark.,” in EDBT/ICDT Workshops,
-pp. 1–8, 2016.
-
-
-[6] BigDL: A Distributed Deep Learning
-Framework for Big Data
-
-
-[7] Distributed Machine Learning - but at what COST?
-
-
-[8] M. Zaharia, M. Chowdhury, T. Das, A. Dave, J. Ma, M. McCauley, M. J. Franklin, S. Shenker,
-and I. Stoica. Resilient distributed datasets: A fault-tolerant abstraction for in-memory cluster
-computing. NSDI’12, 2012.
-
-
-[9] J.-H. Böse, V. Flunkert, J. Gasthaus, T. Januschowski, D. Lange, D. Salinas, S. Schelter,
-M. Seeger, and Y. Wang. Probabilistic demand forecasting at scale. Proc. VLDB Endow.,
-10(12):1694–1705, Aug. 2017.
-
-
-[10] C. Boden, A. Spina, T. Rabl, and V. Markl. Benchmarking data flow systems for scalable
-machine learning. In Proceedings of the 4th Algorithms and Systems on MapReduce and
-Beyond, BeyondMR’17, pages 5:1–5:10, New York, NY, USA, 2017. ACM.
 
 [11] http://peel-framework.org/.
 
@@ -295,11 +125,3 @@ Beyond, BeyondMR’17, pages 5:1–5:10, New York, NY, USA, 2017. ACM.
 distributed systems and algorithms. In Proceedings of the Ninth TPC Technology Conference
 on Performance Evaluation and Benchmarking (TPCTC 2017) at VLDB 2017, 2017.
 
-
-[13] Matei Zaharia , et al. “Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory
-Cluster Computing”, NSDI 2012.
-
-
-[14]  Michael Armbrust, et al. “Spark SQL: Relational Data Processing in Spark”, SIGMOD 2015.
-
-[15] SciKit-Learn. http://scikit-learn.org/stable/
